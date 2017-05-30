@@ -9,7 +9,7 @@ namespace ElmRuntime2.Lexer
     public class StringLexer : Lexer
     {
         private const char quote = '\"';
-        private const char blackSlash = '\\';
+        private const char backslash = '\\';
 
         private readonly Lexer source;
         private readonly Stack<Token> head;
@@ -42,7 +42,7 @@ namespace ElmRuntime2.Lexer
             var ended = false;
             for (var escaped = false; !ended && end < line.Length; end++)
             {
-                if (line[end] == blackSlash)
+                if (line[end] == backslash)
                 {
                     escaped = !escaped;
                 }
