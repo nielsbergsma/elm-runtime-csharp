@@ -9,19 +9,19 @@ namespace ElmRuntime2.Lexer
     public class SingleLineCommentLexer : Lexer
     {
         private readonly Lexer source;
-        private readonly Stack<Token> buffer;
+        private readonly Stack<Token> head;
 
         public SingleLineCommentLexer(Lexer source)
         {
             this.source = new SplitLexer("--", TokenType.SingleLineCommentStart, source);
-            this.buffer = new Stack<Token>();
+            this.head = new Stack<Token>();
         }
 
         public Maybe<Token> Next()
         {
-            if (buffer.Any())
+            if (head.Any())
             {
-                return Maybe<Token>.Some(buffer.Pop());
+                return Maybe<Token>.Some(head.Pop());
             }
 
             var token = source.Next();
@@ -40,7 +40,7 @@ namespace ElmRuntime2.Lexer
 
             if (token.HasValue)
             {
-                buffer.Push(token.Value);
+                head.Push(token.Value);
             }
 
             var text = string.Join(" ", content.Select(c => c.Content));
@@ -50,7 +50,7 @@ namespace ElmRuntime2.Lexer
 
         public void Reset()
         {
-            buffer.Clear();
+            head.Clear();
             source.Reset();
         }
     }

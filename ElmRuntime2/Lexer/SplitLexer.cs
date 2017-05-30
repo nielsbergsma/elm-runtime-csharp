@@ -12,20 +12,20 @@ namespace ElmRuntime2.Lexer
         private readonly TokenType tokenType;
 
         private readonly Lexer source;
-        private readonly Stack<Token> buffer;
+        private readonly Stack<Token> head;
 
         public SplitLexer(string seperator, TokenType tokenType, Lexer source)
         {
             this.seperator = seperator;
             this.tokenType = tokenType;
             this.source = source;
-            this.buffer = new Stack<Token>();
+            this.head = new Stack<Token>();
         }
 
         public Maybe<Token> Next()
         {
-            var token = buffer.Any()
-                ? Maybe<Token>.Some(buffer.Pop())
+            var token = head.Any()
+                ? Maybe<Token>.Some(head.Pop())
                 : source.Next();
 
             if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
@@ -43,14 +43,14 @@ namespace ElmRuntime2.Lexer
 
             if (split.After.HasValue)
             {
-                buffer.Push(split.After.Value);
+                head.Push(split.After.Value);
             }
 
-            buffer.Push(new Token(token.Value.Line, index, tokenType, seperator));
+            head.Push(new Token(token.Value.Line, index, tokenType, seperator));
 
             if (split.Before.HasValue)
             {
-                buffer.Push(split.Before.Value);
+                head.Push(split.Before.Value);
             }
 
             return Next();
@@ -58,7 +58,7 @@ namespace ElmRuntime2.Lexer
 
         public void Reset()
         {
-            buffer.Clear();
+            head.Clear();
             source.Reset();
         }
     }

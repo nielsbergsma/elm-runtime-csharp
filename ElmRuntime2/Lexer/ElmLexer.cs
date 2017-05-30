@@ -23,7 +23,7 @@ namespace ElmRuntime2.Lexer
             lexer = new StringLexer(lexer);
             lexer = new CharLexer(lexer);
 
-            //reset
+            //rest
             lexer = new SingleLineCommentLexer(lexer);
             lexer = new NumberLexer(lexer);
             lexer = new IdentifierLexer(lexer);

@@ -10,19 +10,19 @@ namespace ElmRuntime2.Lexer
     public class NumberLexer : Lexer
     {
         private readonly Lexer source;
-        private readonly Stack<Token> buffer;
+        private readonly Stack<Token> head;
         private readonly static Regex number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public NumberLexer(Lexer source)
         {
             this.source = source;
-            this.buffer = new Stack<Token>();
+            this.head = new Stack<Token>();
         }
 
         public Maybe<Token> Next()
         {
-            var token = buffer.Any()
-                ? Maybe<Token>.Some(buffer.Pop())
+            var token = head.Any()
+                ? Maybe<Token>.Some(head.Pop())
                 : source.Next();
 
             if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
@@ -41,15 +41,15 @@ namespace ElmRuntime2.Lexer
             var end = start + match.Length;
             if (end < content.Length)
             {
-                buffer.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
+                head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
             }
 
             var type = match.Value.Contains(".") ? TokenType.Float : TokenType.Int;
-            buffer.Push(new Token(token.Value.Line, token.Value.Column + start, type, match.Value));
+            head.Push(new Token(token.Value.Line, token.Value.Column + start, type, match.Value));
 
             if (start > 0)
             {
-                buffer.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
+                head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
             }
 
             return Next();
@@ -78,7 +78,7 @@ namespace ElmRuntime2.Lexer
 
         public void Reset()
         {
-            buffer.Clear();
+            head.Clear();
             source.Reset();
         }
     }

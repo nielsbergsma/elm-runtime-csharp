@@ -9,20 +9,20 @@ namespace ElmRuntime2.Lexer
     public class MultiLineCommentLexer : Lexer
     {
         private readonly Lexer source;
-        private readonly Stack<Token> buffer;
+        private readonly Stack<Token> head;
  
         public MultiLineCommentLexer(Lexer source)
         {
             this.source = source;
             this.source = new SplitLexer("{-", TokenType.MultiLineCommentStart, this.source);
             this.source = new SplitLexer("-}", TokenType.MultiLineCommentEnd, this.source);
-            this.buffer = new Stack<Token>();
+            this.head = new Stack<Token>();
         }
 
         public Maybe<Token> Next()
         {
-            var token = buffer.Any()
-                ? Maybe<Token>.Some(buffer.Pop())
+            var token = head.Any()
+                ? Maybe<Token>.Some(head.Pop())
                 : source.Next();
 
             if (!token.HasValue || !token.Value.Is(TokenType.MultiLineCommentStart))
@@ -50,7 +50,7 @@ namespace ElmRuntime2.Lexer
 
             if (token.HasValue)
             {
-                buffer.Push(token.Value);
+                head.Push(token.Value);
             }
 
             if (content.Any())
@@ -74,7 +74,7 @@ namespace ElmRuntime2.Lexer
 
         public void Reset()
         {
-            buffer.Clear();
+            head.Clear();
             source.Reset();
         }
     }

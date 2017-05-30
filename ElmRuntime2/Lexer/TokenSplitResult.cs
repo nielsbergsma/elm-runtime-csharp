@@ -16,6 +16,7 @@ namespace ElmRuntime2.Lexer
         {
             this.before = before;
             this.after = after;
+            this.seperator = seperator;
         }
 
         public Maybe<Token> Before
