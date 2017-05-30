@@ -72,6 +72,5 @@ namespace ElmRuntime2.Lexer
             head.Clear();
             source.Reset();
         }
-
     }
 }

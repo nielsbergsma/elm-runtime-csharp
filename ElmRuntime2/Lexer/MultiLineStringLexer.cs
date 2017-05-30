@@ -8,11 +8,14 @@ namespace ElmRuntime2.Lexer
 {
     public class MultiLineStringLexer : Lexer
     {
+        private const string boundry = @"""""""";
+        private const string newLine = "\n";
+
         private readonly Lexer source;
 
         public MultiLineStringLexer(Lexer source)
         {
-            this.source = new SplitLexer("\"\"\"", TokenType.MultiLineStringBoundry, source);
+            this.source = new SplitLexer(boundry, TokenType.MultiLineStringBoundry, source);
         }
 
         public Maybe<Token> Next()
@@ -43,7 +46,7 @@ namespace ElmRuntime2.Lexer
 
                 for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
                 {
-                    text += content[c].Line == l ? "" : "\n";
+                    text += content[c].Line == l ? string.Empty : newLine;
                     text += content[c].Content;
                 }
 

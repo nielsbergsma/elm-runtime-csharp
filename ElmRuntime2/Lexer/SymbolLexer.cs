@@ -9,7 +9,7 @@ namespace ElmRuntime2.Lexer
     public class SymbolLexer : Lexer
     {
         #region Symbols
-        private readonly static Dictionary<string, TokenType>[] symbolGroups = new[] {
+        private readonly Dictionary<string, TokenType>[] symbolGroups = new[] {
             new Dictionary<string, TokenType>
             {
                 { ">>", TokenType.Op },

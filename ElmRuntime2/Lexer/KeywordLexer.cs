@@ -9,7 +9,7 @@ namespace ElmRuntime2.Lexer
     public class KeywordLexer : Lexer
     {
         #region Keywords
-        private readonly static Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
+        private readonly Dictionary<string, TokenType> keywords = new Dictionary<string, TokenType>
         {
             { "True", TokenType.True },
             { "False", TokenType.False },

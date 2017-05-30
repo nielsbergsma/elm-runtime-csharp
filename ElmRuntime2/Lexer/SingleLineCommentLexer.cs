@@ -8,12 +8,14 @@ namespace ElmRuntime2.Lexer
 {
     public class SingleLineCommentLexer : Lexer
     {
+        private const string commentStart = "--";
+
         private readonly Lexer source;
         private readonly Stack<Token> head;
 
         public SingleLineCommentLexer(Lexer source)
         {
-            this.source = new SplitLexer("--", TokenType.SingleLineCommentStart, source);
+            this.source = new SplitLexer(commentStart, TokenType.SingleLineCommentStart, source);
             this.head = new Stack<Token>();
         }
 

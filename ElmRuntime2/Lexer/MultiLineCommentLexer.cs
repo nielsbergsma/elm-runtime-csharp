@@ -8,14 +8,18 @@ namespace ElmRuntime2.Lexer
 {
     public class MultiLineCommentLexer : Lexer
     {
+        private const string commentStart = "{-";
+        private const string commentEnd = "-}";
+        private const string newLine = "\n";
+
         private readonly Lexer source;
         private readonly Stack<Token> head;
- 
+   
         public MultiLineCommentLexer(Lexer source)
         {
             this.source = source;
-            this.source = new SplitLexer("{-", TokenType.MultiLineCommentStart, this.source);
-            this.source = new SplitLexer("-}", TokenType.MultiLineCommentEnd, this.source);
+            this.source = new SplitLexer(commentStart, TokenType.MultiLineCommentStart, this.source);
+            this.source = new SplitLexer(commentEnd, TokenType.MultiLineCommentEnd, this.source);
             this.head = new Stack<Token>();
         }
 
@@ -60,7 +64,7 @@ namespace ElmRuntime2.Lexer
 
                 for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
                 {
-                    text += content[c].Line == l ? "" : "\n";
+                    text += content[c].Line == l ? string.Empty : newLine;
                     text += content[c].Content;
                 }
 

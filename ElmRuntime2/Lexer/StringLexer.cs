@@ -8,6 +8,9 @@ namespace ElmRuntime2.Lexer
 {
     public class StringLexer : Lexer
     {
+        private const char quote = '\"';
+        private const char blackSlash = '\\';
+
         private readonly Lexer source;
         private readonly Stack<Token> head;
 
@@ -29,23 +32,24 @@ namespace ElmRuntime2.Lexer
             }
 
             var line = token.Value.Content;
-            var start = line.IndexOf("\"");
+            var start = line.IndexOf(quote);
             if (start < 0)
             {
                 return token;
             }
 
             var end = start + 1;
-            for (var escaped = false; end < line.Length; end++)
+            var ended = false;
+            for (var escaped = false; !ended && end < line.Length; end++)
             {
-                if (line[end] == '\\')
+                if (line[end] == blackSlash)
                 {
                     escaped = !escaped;
                 }
-                else if (line[end] == '\"' && !escaped)
+                else if (line[end] == quote && !escaped)
                 {
                     end++;
-                    break;
+                    ended = true;
                 }
                 else
                 {
@@ -53,12 +57,21 @@ namespace ElmRuntime2.Lexer
                 }
             }
 
+            if (!ended)
+            {
+                end = line.Length;
+            }
+
             if (end < line.Length)
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, line.Substring(end)));
             }
 
-            if (end - start > 2)
+            if (!ended)
+            {
+                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
+            }
+            else
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.String, line.Substring(start + 1, end - start - 2)));
             }

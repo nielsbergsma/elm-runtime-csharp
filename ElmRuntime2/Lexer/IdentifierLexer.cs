@@ -11,7 +11,7 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly static Regex identifier = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex identifier = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
 
         public IdentifierLexer(Lexer source)
         {

@@ -11,7 +11,7 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly static Regex number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private readonly Regex number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase);
 
         public NumberLexer(Lexer source)
         {
