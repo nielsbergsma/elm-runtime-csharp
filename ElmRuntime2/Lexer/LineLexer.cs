@@ -20,10 +20,10 @@ namespace ElmRuntime2.Lexer
             this.reset = true;
 
             var lines = input.Split(newLine);
-            for (var l = lines.Length - 1; l >= 0; l--)
+            for (var l = 0; l < lines.Length; l++)
             {
                 var token = new Token(l, 0, TokenType.Unparsed, lines[l]);
-                tokens.Insert(0, token);
+                tokens.Add(token);
             }
         }
 
