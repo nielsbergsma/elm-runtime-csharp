@@ -56,11 +56,12 @@ namespace ElmRuntime2.Lexer
             if (content.Any())
             {
                 var start = content[0];
-                var text = "";
+                var text = string.Empty;
 
-                for (int c = 0, l = start.Line; c < content.Count; l = content[c++].Line)
+                for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
                 {
-                    text += (content[c].Line == l ? "" : "\n") + content[c].Content;
+                    text += content[c].Line == l ? "" : "\n";
+                    text += content[c].Content;
                 }
 
                 return Maybe<Token>.Some(new Token(start.Line, start.Column, TokenType.Comment, text));

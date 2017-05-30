@@ -40,7 +40,7 @@ namespace ElmRuntime2.Lexer
             return other != null
                 && other.before.Equals(before)
                 && other.after.Equals(after)
-                && other.seperator == seperator; ;
+                && other.seperator == seperator;
         }
 
         public override int GetHashCode()

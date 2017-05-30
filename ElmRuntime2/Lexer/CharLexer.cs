@@ -53,21 +53,16 @@ namespace ElmRuntime2.Lexer
                 }
 
                 buffer.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.Char, line.Substring(start + 1, end - start - 2)));
-
-                if (start > 0)
-                {
-                    buffer.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
-                }
             }
             else
             {
                 //missing end quote
                 buffer.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
+            }
 
-                if (start > 0)
-                {
-                    buffer.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
-                }
+            if (start > 0)
+            {
+                buffer.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
             }
 
             return Next();
