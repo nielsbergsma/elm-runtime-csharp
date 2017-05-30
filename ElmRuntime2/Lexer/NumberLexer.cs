@@ -11,12 +11,13 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly Regex number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase);
+        private readonly Regex number;
 
         public NumberLexer(Lexer source)
         {
             this.source = source;
             this.head = new Stack<Token>();
+            this.number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase);
         }
 
         public Maybe<Token> Next()
@@ -31,21 +32,21 @@ namespace ElmRuntime2.Lexer
             }
 
             var content = token.Value.Content;
-            var match = number.Match(content);
-            if (!match.Success || IsSurroundedByIdentifierChar(content, match.Index, match.Index + match.Length))
+            var lookup = number.Match(content);
+            if (!lookup.Success || IsSurroundedByIdentifierChar(content, lookup.Index, lookup.Index + lookup.Length))
             {
                 return token;
             }
 
-            var start = match.Index;
-            var end = start + match.Length;
+            var start = lookup.Index;
+            var end = start + lookup.Length;
             if (end < content.Length)
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
             }
 
-            var type = match.Value.Contains(".") ? TokenType.Float : TokenType.Int;
-            head.Push(new Token(token.Value.Line, token.Value.Column + start, type, match.Value));
+            var type = lookup.Value.Contains(".") ? TokenType.Float : TokenType.Int;
+            head.Push(new Token(token.Value.Line, token.Value.Column + start, type, lookup.Value));
 
             if (start > 0)
             {

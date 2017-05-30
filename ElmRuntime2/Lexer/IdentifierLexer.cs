@@ -11,12 +11,13 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly Regex identifier = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
+        private readonly Regex identifier;
 
         public IdentifierLexer(Lexer source)
         {
             this.source = source;
             this.head = new Stack<Token>();
+            this.identifier = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
         }
 
         public Maybe<Token> Next()
@@ -31,20 +32,20 @@ namespace ElmRuntime2.Lexer
             }
 
             var content = token.Value.Content;
-            var match = identifier.Match(content);
-            if (!match.Success || IsSurroundedByNumber(content, match.Index, match.Index + match.Length))
+            var lookup = identifier.Match(content);
+            if (!lookup.Success || IsSurroundedByNumber(content, lookup.Index, lookup.Index + lookup.Length))
             {
                 return token;
             }
 
-            var start = match.Index;
-            var end = start + match.Length;
+            var start = lookup.Index;
+            var end = start + lookup.Length;
             if (end < content.Length)
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
             }
 
-            head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, match.Value));
+            head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, lookup.Value));
 
             if (start > 0)
             {
