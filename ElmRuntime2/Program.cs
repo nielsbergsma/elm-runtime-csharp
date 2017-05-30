@@ -23,7 +23,7 @@ namespace ElmRuntime2
 
                 if (token.Value.Type == TokenType.Unknown || token.Value.Type == TokenType.Unparsed)
                 {
-                    Console.WriteLine(@"^^^^^ look out, type= {token.Value.Type}");
+                    Console.WriteLine($"^^^^^ look out, type={token.Value.Type}");
                 }
             }
 

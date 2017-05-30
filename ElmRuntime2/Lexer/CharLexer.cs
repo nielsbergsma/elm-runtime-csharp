@@ -35,29 +35,28 @@ namespace ElmRuntime2.Lexer
                 return token;
             }
 
-            var end = start;
-            if (start + 3 < line.Length && line[start + 2] == '\'')
+            var end = start + 1;
+            if (start + 2 < line.Length && line[start + 2] == '\'')
             {
                 end = start + 3;
             }
-            else if (start + 4 < line.Length && line[start + 1] == '\\' &&  line[start + 3] == '\'')
+            else if (start + 3 < line.Length && line[start + 1] == '\\' &&  line[start + 3] == '\'')
             {
                 end = start + 4;
             }
 
-            if (start < end)
+            if (end + 1 < line.Length)
             {
-                if (end + 1 < line.Length)
-                {
-                    head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, line.Substring(end)));
-                }
+                head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, line.Substring(end)));
+            }
 
-                head.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.Char, line.Substring(start + 1, end - start - 2)));
+            if (end - start == 1)
+            {
+                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start, 1)));
             }
             else
             {
-                //missing end quote
-                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
+                head.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.Char, line.Substring(start + 1, end - start - 2)));
             }
 
             if (start > 0)

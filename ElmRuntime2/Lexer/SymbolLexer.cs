@@ -9,7 +9,7 @@ namespace ElmRuntime2.Lexer
     public class SymbolLexer : Lexer
     {
         #region Symbols
-        private readonly static Dictionary<string, TokenType>[] symbols = new[] {
+        private readonly static Dictionary<string, TokenType>[] symbolGroups = new[] {
             new Dictionary<string, TokenType>
             {
                 { ">>", TokenType.Op },
@@ -76,14 +76,14 @@ namespace ElmRuntime2.Lexer
             }
 
             var content = token.Value.Content;
-            foreach (var group in symbols)
+            foreach (var symbols in symbolGroups)
             {
-                var length = (group.First().Key.Length);
-
+                var length = (symbols.First().Key.Length);
                 for (var start = 0; start + length <= content.Length; start++)
                 {
                     var slice = content.Substring(start, length);
-                    if (!group.ContainsKey(slice))
+                    var type = default(TokenType);
+                    if (!symbols.TryGetValue(slice, out type))
                     {
                         continue;
                     }
@@ -94,7 +94,6 @@ namespace ElmRuntime2.Lexer
                         head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
                     }
 
-                    var type = group[slice];
                     head.Push(new Token(token.Value.Line, token.Value.Column + start, type, slice));
 
                     if (start > 0)

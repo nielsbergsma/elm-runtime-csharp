@@ -40,7 +40,6 @@ namespace ElmRuntime2.Lexer
             }
 
             var split = token.Value.Split(index, seperator);
-
             if (split.After.HasValue)
             {
                 head.Push(split.After.Value);
