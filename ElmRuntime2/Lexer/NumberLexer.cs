@@ -11,13 +11,13 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly Regex number;
+        private readonly Regex pattern;
 
         public NumberLexer(Lexer source)
         {
             this.source = source;
             this.head = new Stack<Token>();
-            this.number = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase);
+            this.pattern = new Regex(@"-?((0x[0-9a-f]+)|([0-9]+(\.[0-9]+)?(e(\+|\-)?[0-9]+)?))", RegexOptions.IgnoreCase);
         }
 
         public Maybe<Token> Next()
@@ -32,21 +32,31 @@ namespace ElmRuntime2.Lexer
             }
 
             var content = token.Value.Content;
-            var lookup = number.Match(content);
-            if (!lookup.Success || IsSurroundedByIdentifierChar(content, lookup.Index, lookup.Index + lookup.Length))
+
+            var number = default(Match);
+            foreach (Match match in pattern.Matches(content))
+            {
+                if (!IsSurroundedByIdentifierChar(content, match.Index, match.Index + match.Length))
+                {
+                    number = match;
+                    break;
+                }
+            }
+
+            if (number == null)
             {
                 return token;
             }
 
-            var start = lookup.Index;
-            var end = start + lookup.Length;
+            var start = number.Index;
+            var end = start + number.Length;
             if (end < content.Length)
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
             }
 
-            var type = lookup.Value.Contains(".") ? TokenType.Float : TokenType.Int;
-            head.Push(new Token(token.Value.Line, token.Value.Column + start, type, lookup.Value));
+            var type = number.Value.Contains(".") ? TokenType.Float : TokenType.Int;
+            head.Push(new Token(token.Value.Line, token.Value.Column + start, type, number.Value));
 
             if (start > 0)
             {

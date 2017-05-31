@@ -21,12 +21,10 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            if (head.Any())
-            {
-                return Maybe<Token>.Some(head.Pop());
-            }
+            var token = head.Any()
+                ? Maybe<Token>.Some(head.Pop())
+                : source.Next();
 
-            var token = source.Next();
             if (!token.HasValue || !token.Value.Is(TokenType.SingleLineCommentStart))
             {
                 return token;

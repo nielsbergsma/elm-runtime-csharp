@@ -19,12 +19,14 @@ namespace ElmRuntime2.Lexer
             lexer = new MultiLineCommentLexer(lexer);
             lexer = new MultiLineStringLexer(lexer);
 
+            //comment
+            lexer = new SingleLineCommentLexer(lexer);
+
             //enclosed literals
             lexer = new StringLexer(lexer);
             lexer = new CharLexer(lexer);
 
             //rest
-            lexer = new SingleLineCommentLexer(lexer);
             lexer = new NumberLexer(lexer);
             lexer = new IdentifierLexer(lexer);
             lexer = new KeywordLexer(lexer);
@@ -35,6 +37,19 @@ namespace ElmRuntime2.Lexer
             lexer = new CommentIgnoreLexer(lexer);
 
             return lexer;
+        }
+
+        public static bool Validate(string input)
+        {
+            var tokens = Lex(input);
+            for(var token = tokens.Next(); token.HasValue; token = tokens.Next())
+            {
+                if (token.Value.Is(TokenType.Unparsed) || token.Value.Is(TokenType.Unknown))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

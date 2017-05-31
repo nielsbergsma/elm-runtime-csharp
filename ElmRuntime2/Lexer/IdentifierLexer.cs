@@ -11,13 +11,13 @@ namespace ElmRuntime2.Lexer
     {
         private readonly Lexer source;
         private readonly Stack<Token> head;
-        private readonly Regex identifier;
+        private readonly Regex pattern;
 
         public IdentifierLexer(Lexer source)
         {
             this.source = source;
             this.head = new Stack<Token>();
-            this.identifier = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
+            this.pattern = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
         }
 
         public Maybe<Token> Next()
@@ -32,20 +32,30 @@ namespace ElmRuntime2.Lexer
             }
 
             var content = token.Value.Content;
-            var lookup = identifier.Match(content);
-            if (!lookup.Success || IsSurroundedByNumber(content, lookup.Index, lookup.Index + lookup.Length))
+
+            var identifier = default(Match);
+            foreach(Match match in pattern.Matches(content))
+            {
+                if (!IsSurroundedByNumber(content, match.Index, match.Index + match.Length))
+                {
+                    identifier = match;
+                    break;
+                }
+            }
+
+            if (identifier == null)
             {
                 return token;
             }
 
-            var start = lookup.Index;
-            var end = start + lookup.Length;
+            var start = identifier.Index;
+            var end = start + identifier.Length;
             if (end < content.Length)
             {
                 head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
             }
 
-            head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, lookup.Value));
+            head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, identifier.Value));
 
             if (start > 0)
             {

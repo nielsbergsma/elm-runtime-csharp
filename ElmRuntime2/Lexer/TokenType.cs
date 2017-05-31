@@ -30,6 +30,7 @@ namespace ElmRuntime2.Lexer
         Backslash,
         Dot,
         Range,
+        Underscore,
 
         /* identifier */
         Identifier,

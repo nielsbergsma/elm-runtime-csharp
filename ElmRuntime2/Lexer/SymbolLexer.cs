@@ -31,6 +31,7 @@ namespace ElmRuntime2.Lexer
 
             new Dictionary<string, TokenType>
             {
+                { "_", TokenType.Underscore },
                 { "<", TokenType.Op },
                 { ">", TokenType.Op },
                 { "/", TokenType.Op },
