@@ -22,66 +22,66 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = head.Any()
-                ? Maybe<Token>.Some(head.Pop())
-                : source.Next();
-
-            if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
+            while (true)
             {
-                return token;
-            }
+                var token = head.Any()
+                    ? Maybe<Token>.Some(head.Pop())
+                    : source.Next();
 
-            var line = token.Value.Content;
-            var start = line.IndexOf(quote);
-            if (start < 0)
-            {
-                return token;
-            }
-
-            var end = start + 1;
-            var ended = false;
-            for (var escaped = false; !ended && end < line.Length; end++)
-            {
-                if (line[end] == backslash)
+                if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
                 {
-                    escaped = !escaped;
+                    return token;
                 }
-                else if (line[end] == quote && !escaped)
+
+                var line = token.Value.Content;
+                var start = line.IndexOf(quote);
+                if (start < 0)
                 {
-                    end++;
-                    ended = true;
+                    return token;
+                }
+
+                var end = start + 1;
+                var ended = false;
+                for (var escaped = false; !ended && end < line.Length; end++)
+                {
+                    if (line[end] == backslash)
+                    {
+                        escaped = !escaped;
+                    }
+                    else if (line[end] == quote && !escaped)
+                    {
+                        ended = true;
+                    }
+                    else
+                    {
+                        escaped = false;
+                    }
+                }
+
+                if (!ended)
+                {
+                    end = line.Length;
+                }
+
+                if (end < line.Length)
+                {
+                    head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, line.Substring(end)));
+                }
+
+                if (!ended)
+                {
+                    head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
                 }
                 else
                 {
-                    escaped = false;
+                    head.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.String, line.Substring(start + 1, end - start - 2)));
+                }
+
+                if (start > 0)
+                {
+                    head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
                 }
             }
-
-            if (!ended)
-            {
-                end = line.Length;
-            }
-
-            if (end < line.Length)
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, line.Substring(end)));
-            }
-
-            if (!ended)
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
-            }
-            else
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column + start + 1, TokenType.String, line.Substring(start + 1, end - start - 2)));
-            }
-
-            if (start > 0)
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
-            }
-
-            return Next();
         }
 
         public void Reset()

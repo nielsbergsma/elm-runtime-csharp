@@ -67,46 +67,54 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = head.Any()
-                ? Maybe<Token>.Some(head.Pop())
-                : source.Next();
-
-            if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
+            while (true)
             {
-                return token;
-            }
+                var token = head.Any()
+                    ? Maybe<Token>.Some(head.Pop())
+                    : source.Next();
 
-            var content = token.Value.Content;
-            foreach (var symbols in symbolGroups)
-            {
-                var length = (symbols.First().Key.Length);
-                for (var start = 0; start + length <= content.Length; start++)
+                if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
                 {
-                    var slice = content.Substring(start, length);
-                    var type = default(TokenType);
-                    if (!symbols.TryGetValue(slice, out type))
+                    return token;
+                }
+
+                var content = token.Value.Content;
+                var matched = false;
+                foreach (var symbols in symbolGroups)
+                {
+                    var length = (symbols.First().Key.Length);
+
+                    for (var start = 0; !matched && start + length <= content.Length; start++)
                     {
-                        continue;
+                        var slice = content.Substring(start, length);
+                        var type = default(TokenType);
+                        if (!symbols.TryGetValue(slice, out type))
+                        {
+                            continue;
+                        }
+
+                        var end = start + length;
+                        if (end < content.Length)
+                        {
+                            head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
+                        }
+
+                        head.Push(new Token(token.Value.Line, token.Value.Column + start, type, slice));
+
+                        if (start > 0)
+                        {
+                            head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
+                        }
+
+                        matched = true;
                     }
+                }
 
-                    var end = start + length;
-                    if (end < content.Length)
-                    {
-                        head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
-                    }
-
-                    head.Push(new Token(token.Value.Line, token.Value.Column + start, type, slice));
-
-                    if (start > 0)
-                    {
-                        head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
-                    }
-
-                    return Next();
+                if (!matched)
+                {
+                    return token;
                 }
             }
-
-            return token;
         }
 
         public void Reset()

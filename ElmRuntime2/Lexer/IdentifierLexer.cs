@@ -22,47 +22,48 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = head.Any()
-                ? Maybe<Token>.Some(head.Pop())
-                : source.Next();
-
-            if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
+            while (true)
             {
-                return token;
-            }
+                var token = head.Any()
+                    ? Maybe<Token>.Some(head.Pop())
+                    : source.Next();
 
-            var content = token.Value.Content;
-
-            var identifier = default(Match);
-            foreach(Match match in pattern.Matches(content))
-            {
-                if (!IsSurroundedByNumber(content, match.Index, match.Index + match.Length))
+                if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
                 {
-                    identifier = match;
-                    break;
+                    return token;
+                }
+
+                var content = token.Value.Content;
+
+                var identifier = default(Match);
+                foreach (Match match in pattern.Matches(content))
+                {
+                    if (!IsSurroundedByNumber(content, match.Index, match.Index + match.Length))
+                    {
+                        identifier = match;
+                        break;
+                    }
+                }
+
+                if (identifier == null)
+                {
+                    return token;
+                }
+
+                var start = identifier.Index;
+                var end = start + identifier.Length;
+                if (end < content.Length)
+                {
+                    head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
+                }
+
+                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, identifier.Value));
+
+                if (start > 0)
+                {
+                    head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
                 }
             }
-
-            if (identifier == null)
-            {
-                return token;
-            }
-
-            var start = identifier.Index;
-            var end = start + identifier.Length;
-            if (end < content.Length)
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column + end, TokenType.Unparsed, content.Substring(end)));
-            }
-
-            head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Identifier, identifier.Value));
-
-            if (start > 0)
-            {
-                head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, content.Substring(0, start)));
-            }
-
-            return Next();
         }
 
         private bool IsSurroundedByNumber(string content, int start, int end)

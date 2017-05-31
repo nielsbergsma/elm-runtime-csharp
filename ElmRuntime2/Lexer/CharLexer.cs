@@ -22,6 +22,7 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
+            start:
             var token = head.Any()
                 ? Maybe<Token>.Some(head.Pop())
                 : source.Next();
@@ -67,7 +68,7 @@ namespace ElmRuntime2.Lexer
                 head.Push(new Token(token.Value.Line, token.Value.Column, TokenType.Unparsed, line.Substring(0, start)));
             }
 
-            return Next();
+            goto start;
         }
 
         public void Reset()

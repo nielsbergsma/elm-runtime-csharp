@@ -23,35 +23,36 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = head.Any()
-                ? Maybe<Token>.Some(head.Pop())
-                : source.Next();
-
-            if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
+            while (true)
             {
-                return token;
+                var token = head.Any()
+                    ? Maybe<Token>.Some(head.Pop())
+                    : source.Next();
+
+                if (!token.HasValue || !token.Value.Is(TokenType.Unparsed))
+                {
+                    return token;
+                }
+
+                var index = token.Value.Content.IndexOf(seperator);
+                if (index < 0)
+                {
+                    return token;
+                }
+
+                var split = token.Value.Split(index, seperator);
+                if (split.After.HasValue)
+                {
+                    head.Push(split.After.Value);
+                }
+
+                head.Push(new Token(token.Value.Line, index, tokenType, seperator));
+
+                if (split.Before.HasValue)
+                {
+                    head.Push(split.Before.Value);
+                }
             }
-
-            var index = token.Value.Content.IndexOf(seperator);
-            if (index < 0)
-            {
-                return token;
-            }
-
-            var split = token.Value.Split(index, seperator);
-            if (split.After.HasValue)
-            {
-                head.Push(split.After.Value);
-            }
-
-            head.Push(new Token(token.Value.Line, index, tokenType, seperator));
-
-            if (split.Before.HasValue)
-            {
-                head.Push(split.Before.Value);
-            }
-
-            return Next();
         }
 
         public void Reset()

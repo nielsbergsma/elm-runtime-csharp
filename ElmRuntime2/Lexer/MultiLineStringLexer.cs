@@ -20,41 +20,40 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = source.Next();
-            if (!token.HasValue || !token.Value.Is(TokenType.MultiLineStringBoundry))
+            while (true)
             {
-                return token;
-            }
-
-            var content = new List<Token>();
-            for (token = source.Next(); token.HasValue; token = source.Next())
-            {
-                if (token.Value.Is(TokenType.MultiLineStringBoundry))
+                var token = source.Next();
+                if (!token.HasValue || !token.Value.Is(TokenType.MultiLineStringBoundry))
                 {
-                    break;
-                }
-                else
-                {
-                    content.Add(token.Value);
-                }
-            }
-
-            if (content.Any())
-            {
-                var start = content[0];
-                var text = string.Empty;
-
-                for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
-                {
-                    text += content[c].Line == l ? string.Empty : newLine;
-                    text += content[c].Content;
+                    return token;
                 }
 
-                return Maybe<Token>.Some(new Token(start.Line, start.Column, TokenType.String, text));
-            }
-            else
-            {
-                return Next();
+                var content = new List<Token>();
+                for (token = source.Next(); token.HasValue; token = source.Next())
+                {
+                    if (token.Value.Is(TokenType.MultiLineStringBoundry))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        content.Add(token.Value);
+                    }
+                }
+
+                if (content.Any())
+                {
+                    var start = content[0];
+                    var text = string.Empty;
+
+                    for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
+                    {
+                        text += content[c].Line == l ? string.Empty : newLine;
+                        text += content[c].Content;
+                    }
+
+                    return Maybe<Token>.Some(new Token(start.Line, start.Column, TokenType.String, text));
+                }
             }
         }
 

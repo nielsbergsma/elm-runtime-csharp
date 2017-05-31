@@ -25,54 +25,53 @@ namespace ElmRuntime2.Lexer
 
         public Maybe<Token> Next()
         {
-            var token = head.Any()
-                ? Maybe<Token>.Some(head.Pop())
-                : source.Next();
-
-            if (!token.HasValue || !token.Value.Is(TokenType.MultiLineCommentStart))
+            while (true)
             {
-                return token;
-            }
-            token = source.Next();
+                var token = head.Any()
+                    ? Maybe<Token>.Some(head.Pop())
+                    : source.Next();
 
-            var content = new List<Token>();
-            for (var nesting = 1; nesting > 0 && token.HasValue; token = source.Next())
-            {
-                if (token.Value.Is(TokenType.MultiLineCommentStart))
+                if (!token.HasValue || !token.Value.Is(TokenType.MultiLineCommentStart))
                 {
-                    nesting++;
+                    return token;
                 }
-                else if (token.Value.Is(TokenType.MultiLineCommentEnd))
-                {
-                    nesting--;
-                }
-                else
-                {
-                    content.Add(token.Value);
-                }
-            }
+                token = source.Next();
 
-            if (token.HasValue)
-            {
-                head.Push(token.Value);
-            }
-
-            if (content.Any())
-            {
-                var start = content[0];
-                var text = string.Empty;
-
-                for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
+                var content = new List<Token>();
+                for (var nesting = 1; nesting > 0 && token.HasValue; token = source.Next())
                 {
-                    text += content[c].Line == l ? string.Empty : newLine;
-                    text += content[c].Content;
+                    if (token.Value.Is(TokenType.MultiLineCommentStart))
+                    {
+                        nesting++;
+                    }
+                    else if (token.Value.Is(TokenType.MultiLineCommentEnd))
+                    {
+                        nesting--;
+                    }
+                    else
+                    {
+                        content.Add(token.Value);
+                    }
                 }
 
-                return Maybe<Token>.Some(new Token(start.Line, start.Column, TokenType.Comment, text));
-            }
-            else
-            {
-                return Next();
+                if (token.HasValue)
+                {
+                    head.Push(token.Value);
+                }
+
+                if (content.Any())
+                {
+                    var start = content[0];
+                    var text = string.Empty;
+
+                    for (int c = 0, l = start.Line; c < content.Count; l = content[c].Line, c++)
+                    {
+                        text += content[c].Line == l ? string.Empty : newLine;
+                        text += content[c].Content;
+                    }
+
+                    return Maybe<Token>.Some(new Token(start.Line, start.Column, TokenType.Comment, text));
+                }
             }
         }
 
