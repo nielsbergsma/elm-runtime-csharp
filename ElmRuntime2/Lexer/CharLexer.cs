@@ -8,6 +8,9 @@ namespace ElmRuntime2.Lexer
 {
     public class CharLexer : Lexer
     {
+        private readonly char qoute = '\'';
+        private readonly char backslash = '\\';
+
         private readonly Lexer source;
         private readonly Stack<Token> head;
 
@@ -29,18 +32,18 @@ namespace ElmRuntime2.Lexer
             }
 
             var line = token.Value.Content;
-            var start = line.IndexOf("\'");
+            var start = line.IndexOf(qoute);
             if (start < 0)
             {
                 return token;
             }
 
             var end = start + 1;
-            if (start + 2 < line.Length && line[start + 2] == '\'')
+            if (start + 2 < line.Length && line[start + 2] == qoute)
             {
                 end = start + 3;
             }
-            else if (start + 3 < line.Length && line[start + 1] == '\\' &&  line[start + 3] == '\'')
+            else if (start + 3 < line.Length && line[start + 1] == backslash &&  line[start + 3] == qoute)
             {
                 end = start + 4;
             }

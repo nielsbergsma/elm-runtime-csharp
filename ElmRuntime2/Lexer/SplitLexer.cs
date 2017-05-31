@@ -10,7 +10,6 @@ namespace ElmRuntime2.Lexer
     {
         private readonly string seperator;
         private readonly TokenType tokenType;
-
         private readonly Lexer source;
         private readonly Stack<Token> head;
 
