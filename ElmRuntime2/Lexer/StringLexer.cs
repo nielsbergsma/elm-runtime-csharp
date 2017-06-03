@@ -8,7 +8,7 @@ namespace ElmRuntime2.Lexer
 {
     public class StringLexer : Lexer
     {
-        private const char quote = '\"';
+        private const char doublequote = '\"';
         private const char backslash = '\\';
 
         private readonly Lexer source;
@@ -34,7 +34,7 @@ namespace ElmRuntime2.Lexer
                 }
 
                 var line = token.Value.Content;
-                var start = line.IndexOf(quote);
+                var start = line.IndexOf(doublequote);
                 if (start < 0)
                 {
                     return token;
@@ -48,7 +48,7 @@ namespace ElmRuntime2.Lexer
                     {
                         escaped = !escaped;
                     }
-                    else if (line[end] == quote && !escaped)
+                    else if (line[end] == doublequote && !escaped)
                     {
                         ended = true;
                     }
