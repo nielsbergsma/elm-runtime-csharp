@@ -76,7 +76,7 @@ namespace ElmRuntime2.Expressions
                 //deconstructive tuple
                 else if (stream.IsAt(position, TokenType.LeftParen))
                 {
-                    var parsed =  ParserHelper.ParseList(stream, position);
+                    var parsed =  ParserHelper.ParseArray(stream, position);
                     var names = new List<string>();
 
                     foreach(var argument in parsed.Value)
@@ -93,7 +93,7 @@ namespace ElmRuntime2.Expressions
                 //deconstructive record
                 else if (stream.IsAt(position, TokenType.LeftBrace))
                 {
-                    var parsed = ParserHelper.ParseList(stream, position);
+                    var parsed = ParserHelper.ParseArray(stream, position);
                     var names = new List<string>();
 
                     foreach (var argument in parsed.Value)

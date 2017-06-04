@@ -38,11 +38,11 @@ namespace ElmRuntime2.Parser
                 }
                 else
                 {
-                    var types = ParserHelper.ParseList(stream, position + 3);
+                    var types = ParserHelper.ParseArray(stream, position + 3);
                     foreach(var type in types.Value)
                     {
                         var typeIdentifier = type.At(0).Content;
-                        var constructors = ParserHelper.ParseList(type, 1);
+                        var constructors = ParserHelper.ParseArray(type, 1);
 
                         if (constructors.Value.Length == 0)
                         {

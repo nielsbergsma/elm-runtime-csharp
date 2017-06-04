@@ -50,7 +50,7 @@ namespace ElmRuntime2.Parser
             //list 
             else if (stream.IsAt(position, TokenType.LeftBracket))
             {
-                var parsed = ParserHelper.ParseList(stream, position);
+                var parsed = ParserHelper.ParseArray(stream, position);
                 var isRange = parsed.Value.Length == 1 && parsed.Value[0].ContainsInExpression(0, TokenType.Range);
 
                 if (isRange)
@@ -77,7 +77,7 @@ namespace ElmRuntime2.Parser
             //record
             else if (stream.IsAt(position, TokenType.LeftBrace))
             {
-                var parsed = ParserHelper.ParseList(stream, position);
+                var parsed = ParserHelper.ParseArray(stream, position);
                 var isUpdate = stream.IsAt(position, TokenType.LeftBrace, TokenType.Identifier, TokenType.Pipe);
 
                 if (isUpdate)

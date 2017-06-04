@@ -50,7 +50,7 @@ namespace ElmRuntime2.Expressions
 
         public static ParseResult<ListRange> Parse(TokenStream stream, int position)
         {
-            var parsed = ParserHelper.ParseList(stream, position);
+            var parsed = ParserHelper.ParseArray(stream, position);
             if (!parsed.Success)
             {
                 return new ParseResult<ListRange>(false, default(ListRange), parsed.Position);

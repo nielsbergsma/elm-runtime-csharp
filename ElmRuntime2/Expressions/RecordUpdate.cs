@@ -48,7 +48,7 @@ namespace ElmRuntime2.Expressions
                 throw new ParserException($"Unable to parse record update near line { stream.LineOf(position) }");
             }
 
-            var parsed = ParserHelper.ParseList(stream, position);
+            var parsed = ParserHelper.ParseArray(stream, position);
 
             var name = stream.At(position + 1).Content;
             var fieldExpressions = new Dictionary<string, Expression>();

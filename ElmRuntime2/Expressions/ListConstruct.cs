@@ -33,7 +33,7 @@ namespace ElmRuntime2.Expressions
 
         public static ParseResult<ListConstruct> Parse(TokenStream stream, int position)
         {
-            var parsed = ParserHelper.ParseList(stream, position);
+            var parsed = ParserHelper.ParseArray(stream, position);
             if (!parsed.Success)
             {
                 return new ParseResult<ListConstruct>(false, default(ListConstruct), parsed.Position);

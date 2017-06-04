@@ -12,7 +12,7 @@ namespace ElmRuntime2.Parser
 {
     public static class ParserHelper
     {
-        public static ParseResult<TokenStream[]> ParseList(TokenStream stream, int position)
+        public static ParseResult<TokenStream[]> ParseArray(TokenStream stream, int position)
         {
             var list = new List<TokenStream>();
             var seperator = TokenType.Comma;

@@ -35,7 +35,7 @@ namespace ElmRuntime2.Expressions
 
         public static ParseResult<RecordConstruct> Parse(TokenStream stream, int position)
         {
-            var parsed = ParserHelper.ParseList(stream, position);
+            var parsed = ParserHelper.ParseArray(stream, position);
 
             var fieldExpressions = new Dictionary<string, Expression>();
             foreach (var assignment in parsed.Value)
