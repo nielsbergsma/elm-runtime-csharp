@@ -9,12 +9,12 @@ using ElmRuntime2.Parser;
 
 namespace ElmRuntime2.Expressions
 {
-    public class Range : Expression
+    public class ListRange : Expression
     {
         private readonly Expression from;
         private readonly Expression to;
 
-        public Range(Expression from, Expression to)
+        public ListRange(Expression from, Expression to)
         {
             this.from = from;
             this.to = to;
@@ -48,21 +48,21 @@ namespace ElmRuntime2.Expressions
             return new List(values.ToArray());
         }
 
-        public static ParseResult<Range> Parse(TokenStream stream, int position)
+        public static ParseResult<ListRange> Parse(TokenStream stream, int position)
         {
             var parsed = ParserHelper.ParseList(stream, position);
             if (!parsed.Success)
             {
-                return new ParseResult<Range>(false, default(Range), parsed.Position);
+                return new ParseResult<ListRange>(false, default(ListRange), parsed.Position);
             }
 
-            var from = ParserHelper.ParseExpression(parsed.Value[0], 0);
-            var to = ParserHelper.ParseExpression(parsed.Value[0], from.Position + 1);
+            var from = ExpressionParser.ParseExpression(parsed.Value[0], 0);
+            var to = ExpressionParser.ParseExpression(parsed.Value[0], from.Position + 1);
 
             if (from.Success && to.Success)
             {
-                var range = new Range(from.Value, to.Value);
-                return new ParseResult<Range>(true, range, parsed.Position);
+                var range = new ListRange(from.Value, to.Value);
+                return new ParseResult<ListRange>(true, range, parsed.Position);
             }
             else
             {

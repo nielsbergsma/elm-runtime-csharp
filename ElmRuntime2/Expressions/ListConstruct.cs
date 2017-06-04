@@ -42,7 +42,7 @@ namespace ElmRuntime2.Expressions
             var expressions = new List<Expression>();
             foreach (var tokens in parsed.Value)
             {
-                var expression = ParserHelper.ParseExpression(tokens, 0);
+                var expression = ExpressionParser.ParseExpression(tokens, 0);
                 if (!expression.Success)
                 {
                     throw new ParserException($"Unable to parse list item expression near line {stream.LineOf(position)}");

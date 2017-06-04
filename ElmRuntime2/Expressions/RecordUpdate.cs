@@ -57,7 +57,7 @@ namespace ElmRuntime2.Expressions
             {
                 var assignment = parsed.Value[0];
                 var fieldName = assignment.At(2).Content;
-                var fieldExpression = ParserHelper.ParseExpression(assignment, 4);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 4);
 
                 fieldExpressions[fieldName] = fieldExpression.Value;
             }
@@ -65,7 +65,7 @@ namespace ElmRuntime2.Expressions
             for (var fe = 1; fe < parsed.Value.Length; fe++)
             {
                 var assignment = parsed.Value[fe];
-                var fieldExpression = ParserHelper.ParseExpression(assignment, 2);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

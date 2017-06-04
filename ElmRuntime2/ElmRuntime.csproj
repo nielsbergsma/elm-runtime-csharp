@@ -68,13 +68,14 @@
     <Compile Include="Expressions\FunctionArgument.cs" />
     <Compile Include="Expressions\Lambda.cs" />
     <Compile Include="Expressions\ListConstruct.cs" />
+    <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\ModuleImports.cs" />
     <Compile Include="Parser\Module.cs" />
     <Compile Include="Parser\ModuleExposes.cs" />
     <Compile Include="Parser\Operator.cs" />
-    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ParserHelper.cs" />
     <Compile Include="Parser\ParseResult.cs" />
-    <Compile Include="Expressions\Range.cs" />
+    <Compile Include="Expressions\ListRange.cs" />
     <Compile Include="Expressions\RecordConstruct.cs" />
     <Compile Include="Expressions\RecordUpdate.cs" />
     <Compile Include="Scope.cs" />

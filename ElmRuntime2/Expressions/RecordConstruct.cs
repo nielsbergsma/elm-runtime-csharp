@@ -40,7 +40,7 @@ namespace ElmRuntime2.Expressions
             var fieldExpressions = new Dictionary<string, Expression>();
             foreach (var assignment in parsed.Value)
             {
-                var fieldExpression = ParserHelper.ParseExpression(assignment, 2);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

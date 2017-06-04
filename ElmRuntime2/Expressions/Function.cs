@@ -113,7 +113,7 @@ namespace ElmRuntime2.Expressions
                 }
             }
 
-            var parsedExpression = ParserHelper.ParseExpression(stream, position + 1);
+            var parsedExpression = ExpressionParser.ParseExpression(stream, position + 1);
             if (!parsedExpression.Success)
             {
                 throw new ParserException($"No expression found for function at line { stream.LineOf(position) }");
