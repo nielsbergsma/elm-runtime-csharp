@@ -11,6 +11,12 @@ namespace ElmRuntime2.Parser
     {
         public static ParseResult<ModuleImport[]> Parse(TokenStream stream, int position)
         {
+            var imports = new List<ModuleImport>();
+            if (!stream.IsAt(position + 1, TokenType.Identifier))
+            {
+                return new ParseResult<ModuleImport[]>(imports.ToArray(), position + 1);
+            }
+
             var name = stream.At(position + 1).Content;
 
             var alias = name;
@@ -20,7 +26,6 @@ namespace ElmRuntime2.Parser
                 alias = stream.At(aliasStart.Value + 1).Content;
             }
 
-            var imports = new List<ModuleImport>();
             if (stream.IsAt(position + 2, TokenType.Exposing))
             {
                 if (stream.IsAt(position + 3, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))

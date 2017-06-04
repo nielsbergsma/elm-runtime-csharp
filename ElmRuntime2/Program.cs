@@ -25,7 +25,7 @@ namespace ElmRuntime2
 
             lexer.Reset();
             var tokens = new TokenStream(lexer);
-            var module = Module.Parse(tokens);
+            var module = Module.Parse(tokens, 0);
 
 
             //var stopwatch = System.Diagnostics.Stopwatch.StartNew();

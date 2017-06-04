@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Lexer
 {
-
-
     public class SymbolLexer : Lexer
     {
         #region Symbols

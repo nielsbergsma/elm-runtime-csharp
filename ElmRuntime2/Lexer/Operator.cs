@@ -10,30 +10,30 @@ namespace ElmRuntime2.Lexer
     {
         Unknown = 0,
 
-        ShiftLeft, // <<
-        ShiftRight, // >>
-        DevideToInt, // //
-        Concat, // ++
-        Prepend, // ::
-        Equal, // ==
-        NotEqual, // /=
-        LesserOrEqual, // <=
-        GreaterOrEqual, // >=
-        And, // &&
-        Or, // ||
-        ContinueLeft, // |>
-        ContinueRight, // <|
-        Lesser, // <
-        Greater, // >
-        Devide, // /
-        Multiply, // *
-        Power, // ^
-        Plus, // +
-        Minus, // -
-        Modulo, // %
+        /* << */ ShiftLeft,
+        /* >> */ ShiftRight,
+        /* // */ DevideToInt,
+        /* ++ */ Concat,
+        /* :: */ Prepend,
+        /* == */ Equal,
+        /* /= */ NotEqual,
+        /* <= */ LesserOrEqual,
+        /* >= */ GreaterOrEqual,
+        /* && */ And,
+        /* || */ Or,
+        /* |> */ TransformLeft,
+        /* <| */ TransformRight,
+        /* <  */ Lesser,
+        /* >  */ Greater,
+        /* /  */ Devide,
+        /* *  */ Multiply,
+        /* ^  */ Power,
+        /* +  */ Plus,
+        /* -  */ Minus,
+        /* %  */ Modulo,
     }
 
-    public static class OperatorHelper
+    public static class OperatorParser
     {
         public static Operator Parse(string value)
         {
@@ -62,9 +62,9 @@ namespace ElmRuntime2.Lexer
                 case "||":
                     return Operator.Or;
                 case "|>":
-                    return Operator.ContinueLeft;
+                    return Operator.TransformLeft;
                 case "<|":
-                    return Operator.ContinueRight;
+                    return Operator.TransformRight;
                 case "<":
                     return Operator.Lesser;
                 case ">":

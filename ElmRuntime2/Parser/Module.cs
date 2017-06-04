@@ -22,10 +22,9 @@ namespace ElmRuntime2.Parser
             this.expressions = new Dictionary<string, Expression>();
         }
 
-        public static Module Parse(TokenStream stream)
+        public static Module Parse(TokenStream stream, int position)
         {
             var module = new Module();
-            var position = 0;
 
             while (!stream.IsAtEndOfStream(position))
             {
@@ -89,7 +88,7 @@ namespace ElmRuntime2.Parser
 
         private int ParseImport(TokenStream stream, int position)
         {
-            var parsed = ModuleImports.Parse(stream, position + 0);
+            var parsed = ModuleImports.Parse(stream, position);
             imports.AddRange(parsed.Value);
             return parsed.Position;
         }
