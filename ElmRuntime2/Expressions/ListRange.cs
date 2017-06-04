@@ -56,8 +56,8 @@ namespace ElmRuntime2.Expressions
                 return new ParseResult<ListRange>(false, default(ListRange), parsed.Position);
             }
 
-            var from = ExpressionParser.ParseExpression(parsed.Value[0], 0);
-            var to = ExpressionParser.ParseExpression(parsed.Value[0], from.Position + 1);
+            var from = ExpressionParser.Parse(parsed.Value[0], 0);
+            var to = ExpressionParser.Parse(parsed.Value[0], from.Position + 1);
 
             if (from.Success && to.Success)
             {

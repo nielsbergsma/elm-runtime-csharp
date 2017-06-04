@@ -11,7 +11,7 @@ namespace ElmRuntime2.Parser
 {
     public static class ExpressionParser
     {
-        public static ParseResult<Expression> ParseExpression(TokenStream stream, int position)
+        public static ParseResult<Expression> Parse(TokenStream stream, int position)
         {
             if (position >= stream.Length)
             {

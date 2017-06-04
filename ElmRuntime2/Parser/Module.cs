@@ -48,7 +48,7 @@ namespace ElmRuntime2.Parser
                 //expression
                 else
                 {
-                    var parsed = ParserHelper.ParseLine(stream, position);
+                    var parsed = LineParser.Parse(stream, position);
                     if (parsed.Success)
                     {
                         if (parsed.Value is Function)

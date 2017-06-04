@@ -69,6 +69,7 @@
     <Compile Include="Expressions\Lambda.cs" />
     <Compile Include="Expressions\ListConstruct.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
+    <Compile Include="Parser\LineParser.cs" />
     <Compile Include="Parser\ModuleImports.cs" />
     <Compile Include="Parser\Module.cs" />
     <Compile Include="Parser\ModuleExposes.cs" />
