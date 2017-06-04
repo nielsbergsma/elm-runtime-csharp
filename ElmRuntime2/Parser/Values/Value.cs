@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Parser.Values
 {
-    public interface Value
+    public interface Value : Expression
     {
         Value Op(Operator @operator);
         Value Op(Operator @operator, Value argument);

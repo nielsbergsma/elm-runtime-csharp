@@ -48,8 +48,8 @@ namespace ElmRuntime2.Parser
                 }
             }
 
-            var nextLinePosition = stream.SkipUntilNextLine(position);
-            return new ParseResult<ModuleExpose[]>(exposes.ToArray(), nextLinePosition);
+            var nextExpressionStart = stream.SkipToNextExpression(position);
+            return new ParseResult<ModuleExpose[]>(exposes.ToArray(), nextExpressionStart);
         }
     }
 
@@ -60,16 +60,16 @@ namespace ElmRuntime2.Parser
 
     public class ModuleUnresolvedExpose : ModuleExpose
     {
-        private readonly string[] reference;
+        private readonly string[] selector;
 
-        public ModuleUnresolvedExpose(params string[] reference)
+        public ModuleUnresolvedExpose(params string[] selector)
         {
-            this.reference = reference;
+            this.selector = selector;
         }
 
-        public string[] Reference
+        public string[] Selector
         {
-            get { return reference; }
+            get { return selector; }
         }
     }
 }

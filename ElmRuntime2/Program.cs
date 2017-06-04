@@ -1,5 +1,6 @@
 ﻿using ElmRuntime2.Lexer;
 using ElmRuntime2.Parser;
+using ElmRuntime2.Parser.Values;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,36 +14,27 @@ namespace ElmRuntime2
     {
         static void Main(string[] args)
         {
-           
             var input = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
-
             var lexer = ElmLexer.Lex(input);
-            var position = 0;
-            for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
-            {
-                Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
-            }
+            //var position = 0;
+            //for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
+            //{
+            //    Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
+            //}
+            //lexer.Reset();
 
-            lexer.Reset();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var tokens = new TokenStream(lexer);
             var module = Module.Parse(tokens, 0);
 
+            var scope = new Scope();
+            var foo = new Record();
+            scope.SetValue("foo", foo);
 
-            //var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-            //var lexer = ElmLexer.Lex(input);
+            var result = module.Evaluate("main", new Value[0], scope);
 
-            //for (var token = lexer.Next(); token.HasValue; token = lexer.Next())
-            //{
-            //    Console.WriteLine($"Token [{token.Value.Type}:{token.Value.Line+1}:{token.Value.Column+1}]{token.Value.Content}");
-
-            //    if (token.Value.Type == TokenType.Unknown || token.Value.Type == TokenType.Unparsed)
-            //    {
-            //        Console.WriteLine($"^^^^^ <-- look out, type={token.Value.Type}");
-            //    }
-            //}
-
-            //stopwatch.Stop();
-            //Console.WriteLine($"Lexing valid={valid}, took={stopwatch.ElapsedMilliseconds}ms");
+            stopwatch.Stop();
+            Console.WriteLine($"Lexing / parsing took={stopwatch.ElapsedMilliseconds}ms, result={result}");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
+using ElmRuntime2.Parser.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,7 @@ namespace ElmRuntime2.Parser
 
         public Module()
         {
-            this.name = "default";
+            this.name = "Default";
             this.imports = new List<ModuleImport>();
             this.exposing = new List<ModuleExpose>();
             this.expressions = new Dictionary<string, Expression>();
@@ -42,40 +44,48 @@ namespace ElmRuntime2.Parser
                 {
                     position = module.ParseImport(stream, position);
                 }
-                //annotation
-                else if (stream.IsAt(position, TokenType.Identifier, TokenType.Colon))
-                {
-                    position = stream.SkipUntilNextLine(position);
-                }
                 //expression
                 else
                 {
-                    var start = position;
-                    var end = stream.SkipUntilNextLine(start);
-
-                    Console.WriteLine("--EXPRESSION START--");
-                    for (; start < end; start++)
+                    var parsed = Parser.ParseLine(stream, position);
+                    if (parsed.Success)
                     {
-                        var token = stream.At(start);
-                        Console.WriteLine($"Token {token.Type} {token.Content}");
+                        if (parsed.Value is Function)
+                        {
+                            var function = parsed.Value as Function;
+                            module.expressions[function.Name] = function;
+                        }
+                        else
+                        {
+                            throw new ParserException($"Not supported expression {parsed.Value} at module level");
+                        }
                     }
-                    Console.WriteLine("--EXPRESSION END--");
 
-                    position = end;
+                    position = parsed.Position;
                 }
             }
 
             return module;
         }
 
+        public Expression Evaluate(string name)
+        {
+            return Evaluate(name, new Value[0], new Scope());
+        }
+
+        public Expression Evaluate(string name, Value[] arguments, Scope scope)
+        {
+            return expressions[name].Evaluate(arguments, scope);
+        }
+
         private int ParseNameAndExposing(TokenStream stream, int position)
         {
-            if (stream.IsAt(position + 1, TokenType.Identifier))
+            name = "";
+            for (position++; position < stream.Length && stream.IsAnyAt(position, TokenType.Identifier, TokenType.Dot); position++)
             {
-                name = stream.At(position + 1).Content;
-                position += 2;
+                name += stream.At(position).Content;
             }
-
+            
             if (stream.IsAt(position, TokenType.Exposing))
             {
                 var parsed = ModuleExposes.Parse(stream, position);

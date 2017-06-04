@@ -17,10 +17,14 @@ namespace ElmRuntime2.Parser
                 return new ParseResult<ModuleImport[]>(imports.ToArray(), position + 1);
             }
 
-            var name = stream.At(position + 1).Content;
+            var name = "";
+            for (var index = position + 1; index < stream.Length && stream.IsAnyAt(index, TokenType.Identifier, TokenType.Dot); index++)
+            {
+                name += stream.At(index).Content;
+            }
 
             var alias = name;
-            var aliasStart = stream.FindOnLine(position + 1, TokenType.As);
+            var aliasStart = stream.FindInExpression(position + 1, TokenType.As);
             if (aliasStart.HasValue)
             {
                 alias = stream.At(aliasStart.Value + 1).Content;
@@ -65,8 +69,8 @@ namespace ElmRuntime2.Parser
                 imports.Add(new ModuleUnresolvedImport(name, alias));
             }
 
-            var nextLinePosition = stream.SkipUntilNextLine(position);
-            return new ParseResult<ModuleImport[]>(imports.ToArray(), nextLinePosition); 
+            var nextExpressionStart = stream.SkipToNextExpression(position);
+            return new ParseResult<ModuleImport[]>(imports.ToArray(), nextExpressionStart); 
         }
     }
 
@@ -79,13 +83,13 @@ namespace ElmRuntime2.Parser
     {
         private readonly string name;
         private readonly string alias;
-        private readonly string[] reference;
+        private readonly string[] selector;
 
-        public ModuleUnresolvedImport(string name, string alias, params string[] reference)
+        public ModuleUnresolvedImport(string name, string alias, params string[] selector)
         {
             this.name = name;
             this.alias = alias;
-            this.reference = reference;
+            this.selector = selector;
         }
 
         public string Name
@@ -98,9 +102,9 @@ namespace ElmRuntime2.Parser
             get { return alias; }
         }
 
-        public string[] Reference
+        public string[] Selector
         {
-            get { return reference; }
+            get { return selector; }
         }
     }
 }

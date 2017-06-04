@@ -31,9 +31,14 @@ namespace ElmRuntime2.Parser
             get { return tokens.Length; }
         }
 
-        public bool IsAtStartOfLine(int position)
+        public bool AtStartOfExpression(int position)
         {
-            return (tokens.Length > 0 && position == 0) || (position < tokens.Length && tokens[position].Line != tokens[position - 1].Line);
+            if (position >= tokens.Length)
+            {
+                return false;
+            }
+
+            return tokens[position].Column == 0;
         }
 
         public bool IsAtEndOfStream(int position)
@@ -64,12 +69,21 @@ namespace ElmRuntime2.Parser
             return true;
         }
 
+        public bool IsAnyAt(int position, params TokenType[] types)
+        {
+            if (position >= tokens.Length)
+            {
+                return false;
+            }
+            return types.Contains(tokens[position].Type);
+        }
+
         public Token At(int position)
         {
             return tokens[position];
         }
 
-        public Maybe<int> FindOnLine(int position, TokenType type)
+        public Maybe<int> FindInExpression(int position, TokenType type)
         {
             if (position >= tokens.Length)
             {
@@ -77,39 +91,36 @@ namespace ElmRuntime2.Parser
             }
 
             var line = tokens[position].Line;
-            for (; position < tokens.Length && tokens[position].Line == line; position++)
+            while (position < tokens.Length && (tokens[position].Line == line || tokens[position].Column != 0))
             {
                 if (tokens[position].Type == type)
                 {
                     return Maybe<int>.Some(position);
                 }
+                position++;
             }
 
             return Maybe<int>.None();
         }
 
-        public int SkipUntil(int position, TokenType type)
+        public bool ContainsInExpression(int position, TokenType type)
+        {
+            return FindInExpression(position, type).HasValue;
+        }
+
+        public int LineOf(int position)
         {
             if (position >= tokens.Length)
             {
-                return tokens.Length - 1;
+                return -1;
             }
-
-            for (; position < tokens.Length && tokens[position].Type != type; position++)
+            else
             {
-                //forward position
+                return tokens[position].Line;
             }
-
-            if (tokens[position].Type == type)
-            {
-                position++;
-            }
-
-            position++;
-            return position;
         }
 
-        public int SkipUntilNextLine(int position)
+        public int SkipToNextExpression(int position, int columnOffset = 0)
         {
             if (position >= tokens.Length)
             {
@@ -117,8 +128,9 @@ namespace ElmRuntime2.Parser
             }
 
             var line = tokens[position].Line;
-            for (; position < tokens.Length && tokens[position].Line == line; position++)
+            while (position < tokens.Length && (tokens[position].Line == line || tokens[position].Column <= columnOffset))
             {
+                position++;
                 //forward position
             }
 

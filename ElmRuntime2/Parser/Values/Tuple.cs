@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,11 @@ namespace ElmRuntime2.Parser.Values
             this.values = values;
         }
 
+        public Expression Evaluate(Value[] arguments, Scope scope)
+        {
+            return this;
+        }
+
         public Value Value(int index)
         {
             if (index < values.Length)
@@ -25,6 +31,20 @@ namespace ElmRuntime2.Parser.Values
             else
             {
                 throw new RuntimeException("Index bigger than size tuple");
+            }
+        }
+
+        public bool TryGetValue(int item, out Value value)
+        {
+            if (item < values.Length)
+            {
+                value = values[item];
+                return true;
+            }
+            else
+            {
+                value = default(Value);
+                return false;
             }
         }
 

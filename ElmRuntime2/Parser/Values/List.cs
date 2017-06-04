@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,16 @@ namespace ElmRuntime2.Parser.Values
         public List(Value[] values)
         {
             this.values = values;
+        }
+
+        public Value[] Values
+        {
+            get { return values; }
+        }
+
+        public Expression Evaluate(Value[] arguments, Scope scope)
+        {
+            return this;
         }
 
         public bool IsEmpty()
@@ -42,10 +53,10 @@ namespace ElmRuntime2.Parser.Values
 
         public List Prepend(Value value)
         {
-            var newValues = new Value[values.Length + 1];
+            var newValues = new Value[this.values.Length + 1];
             newValues[0] = value;
-            values.CopyTo(newValues, 1);
-            return new List(values);
+            this.values.CopyTo(newValues, 1);
+            return new List(this.values);
         }
 
         public List Concat(List other)

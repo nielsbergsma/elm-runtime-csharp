@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,10 @@ namespace ElmRuntime2.Parser.Values
     {
         private readonly Dictionary<string, Value> fields;
 
-        public Record(RecordFieldValue[] fieldValues)
+        public Record()
+            : this (new Dictionary<string, Value>())
         {
-            fields = new Dictionary<string, Value>();
-            foreach (var field in fieldValues)
-            {
-                fields[field.Name] = field.Value;
-            }
+
         }
 
         private Record(Dictionary<string, Value> fields)
@@ -25,14 +23,24 @@ namespace ElmRuntime2.Parser.Values
             this.fields = fields;
         }
 
-        public Record Update(RecordFieldValue[] updates)
+        public Expression Evaluate(Value[] arguments, Scope scope)
+        {
+            return this;
+        }
+
+        public Record SetFields(RecordFieldValue[] values)
         {
             var fields = new Dictionary<string, Value>(this.fields);
-            foreach (var update in updates)
+            foreach (var value in values)
             {
-                fields[update.Name] = update.Value;
+                fields[value.Name] = value.Value;
             }
             return new Record(fields);
+        }
+
+        public bool TryGetValue(string name, out Value value)
+        {
+            return fields.TryGetValue(name, out value);
         }
 
         public Value Op(Operator @operator)

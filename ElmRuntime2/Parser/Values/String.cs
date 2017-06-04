@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,20 @@ namespace ElmRuntime2.Parser.Values
     public class String : Value
     {
         private readonly string value;
-        private object otherFloat;
 
         public String(string value)
         {
             this.value = value;
+        }
+
+        public string Value
+        {
+            get { return value; }
+        }
+
+        public Expression Evaluate(Value[] arguments, Scope scope)
+        {
+            return this;
         }
 
         public Value Op(Operator @operator)

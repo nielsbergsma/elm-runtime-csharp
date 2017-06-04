@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,11 @@ namespace ElmRuntime2.Parser.Values
         {
             this.constructor = constructor;
             this.values = values;
+        }
+
+        public Expression Evaluate(Value[] arguments, Scope scope)
+        {
+            return this;
         }
 
         public Value Get(int index)

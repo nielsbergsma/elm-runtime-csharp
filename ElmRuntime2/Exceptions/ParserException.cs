@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2
+namespace ElmRuntime2.Exceptions
 {
-    public class RuntimeException : Exception
+    public class ParserException : Exception
     {
-        public RuntimeException(string reason)
-            : base(reason)
+        public ParserException(string message) : base(message)
         {
-
         }
     }
 }

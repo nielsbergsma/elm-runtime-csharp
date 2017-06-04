@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Lexer
+namespace ElmRuntime2.Parser
 {
     public enum Operator
     {
