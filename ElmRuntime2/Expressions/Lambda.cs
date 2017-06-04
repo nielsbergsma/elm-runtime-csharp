@@ -1,11 +1,11 @@
-﻿using System;
+﻿using ElmRuntime2.Values;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ElmRuntime2.Parser.Values;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class Lambda : Expression
     {

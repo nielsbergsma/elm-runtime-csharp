@@ -21,7 +21,7 @@ namespace ElmRuntime2.Parser
             }
 
             //expose list
-            var parsed = Parser.ParseList(stream, position + 1);
+            var parsed = ParserHelper.ParseList(stream, position + 1);
             foreach (var expose in parsed.Value)
             {
                 var name = expose.At(0).Content;
@@ -34,7 +34,7 @@ namespace ElmRuntime2.Parser
                 //expose partial + constructors
                 else if (expose.IsAt(1, TokenType.LeftParen))
                 {
-                    var constructors = Parser.ParseList(expose, 1);
+                    var constructors = ParserHelper.ParseList(expose, 1);
                     foreach(var constructor in constructors.Value)
                     {
                         var identifier = constructor.At(0).Content;

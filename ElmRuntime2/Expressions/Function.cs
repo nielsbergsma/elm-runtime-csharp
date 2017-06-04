@@ -1,13 +1,14 @@
 ﻿using ElmRuntime2.Exceptions;
 using ElmRuntime2.Lexer;
-using ElmRuntime2.Parser.Values;
+using ElmRuntime2.Parser;
+using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class Function : Expression
     {
@@ -75,7 +76,7 @@ namespace ElmRuntime2.Parser
                 //deconstructive tuple
                 else if (stream.IsAt(position, TokenType.LeftParen))
                 {
-                    var parsed = Parser.ParseList(stream, position);
+                    var parsed =  ParserHelper.ParseList(stream, position);
                     var names = new List<string>();
 
                     foreach(var argument in parsed.Value)
@@ -92,7 +93,7 @@ namespace ElmRuntime2.Parser
                 //deconstructive record
                 else if (stream.IsAt(position, TokenType.LeftBrace))
                 {
-                    var parsed = Parser.ParseList(stream, position);
+                    var parsed = ParserHelper.ParseList(stream, position);
                     var names = new List<string>();
 
                     foreach (var argument in parsed.Value)
@@ -112,7 +113,7 @@ namespace ElmRuntime2.Parser
                 }
             }
 
-            var parsedExpression = Parser.ParseExpression(stream, position + 1);
+            var parsedExpression = ParserHelper.ParseExpression(stream, position + 1);
             if (!parsedExpression.Success)
             {
                 throw new ParserException($"No expression found for function at line { stream.LineOf(position) }");

@@ -1,5 +1,7 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Parser
 {
-    public static class Parser
+    public static class ParserHelper
     {
         public static ParseResult<TokenStream[]> ParseList(TokenStream stream, int position)
         {

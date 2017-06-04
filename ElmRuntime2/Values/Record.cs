@@ -1,20 +1,28 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser.Values
+namespace ElmRuntime2.Values
 {
-    public class Tuple : Value
+    public class Record : Value
     {
-        private readonly Value[] values;
+        private readonly Dictionary<string, Value> fields;
 
-        public Tuple(Value[] values)
+        public Record()
+            : this (new Dictionary<string, Value>())
         {
-            this.values = values;
+
+        }
+
+        private Record(Dictionary<string, Value> fields)
+        {
+            this.fields = fields;
         }
 
         public Expression Evaluate(Value[] arguments, Scope scope)
@@ -22,30 +30,19 @@ namespace ElmRuntime2.Parser.Values
             return this;
         }
 
-        public Value Value(int index)
+        public Record SetFields(RecordFieldValue[] values)
         {
-            if (index < values.Length)
+            var fields = new Dictionary<string, Value>(this.fields);
+            foreach (var value in values)
             {
-                return values[index];
+                fields[value.Name] = value.Value;
             }
-            else
-            {
-                throw new RuntimeException("Index bigger than size tuple");
-            }
+            return new Record(fields);
         }
 
-        public bool TryGetValue(int item, out Value value)
+        public bool TryGetValue(string name, out Value value)
         {
-            if (item < values.Length)
-            {
-                value = values[item];
-                return true;
-            }
-            else
-            {
-                value = default(Value);
-                return false;
-            }
+            return fields.TryGetValue(name, out value);
         }
 
         public Value Op(Operator @operator)
@@ -69,15 +66,16 @@ namespace ElmRuntime2.Parser.Values
 
         public bool SameAs(Value other)
         {
-            var otherTuple = other as Tuple;
-            if (otherTuple == null || otherTuple.values.Length != values.Length)
+            var otherRecord = other as Record;
+            if (otherRecord == null || otherRecord.fields.Count != fields.Count)
             {
                 return false;
             }
 
-            for (var v = 0; v < values.Length; v++)
+            foreach (var otherField in otherRecord.fields)
             {
-                if (!otherTuple.values[v].SameAs(values[v]))
+                var thisFieldValue = default(Value);
+                if (!fields.TryGetValue(otherField.Key, out thisFieldValue) || !otherField.Value.SameAs(thisFieldValue))
                 {
                     return false;
                 }

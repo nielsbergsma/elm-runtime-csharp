@@ -1,21 +1,21 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser.Values
+namespace ElmRuntime2.Values
 {
-    public class Union : Value
+    public class Tuple : Value
     {
-        private readonly string constructor;
         private readonly Value[] values;
 
-        public Union(string constructor, Value[] values)
+        public Tuple(Value[] values)
         {
-            this.constructor = constructor;
             this.values = values;
         }
 
@@ -24,9 +24,30 @@ namespace ElmRuntime2.Parser.Values
             return this;
         }
 
-        public Value Get(int index)
+        public Value Value(int index)
         {
-            return index < values.Length ? values[index] : null;
+            if (index < values.Length)
+            {
+                return values[index];
+            }
+            else
+            {
+                throw new RuntimeException("Index bigger than size tuple");
+            }
+        }
+
+        public bool TryGetValue(int item, out Value value)
+        {
+            if (item < values.Length)
+            {
+                value = values[item];
+                return true;
+            }
+            else
+            {
+                value = default(Value);
+                return false;
+            }
         }
 
         public Value Op(Operator @operator)
@@ -50,19 +71,20 @@ namespace ElmRuntime2.Parser.Values
 
         public bool SameAs(Value other)
         {
-            var otherUnion = other as Union;
-            if (otherUnion == null || otherUnion.constructor == constructor || otherUnion.values.Length != values.Length)
+            var otherTuple = other as Tuple;
+            if (otherTuple == null || otherTuple.values.Length != values.Length)
             {
                 return false;
             }
 
             for (var v = 0; v < values.Length; v++)
             {
-                if (!otherUnion.values[v].SameAs(values[v]))
+                if (!otherTuple.values[v].SameAs(values[v]))
                 {
                     return false;
                 }
             }
+
             return true;
         }
     }

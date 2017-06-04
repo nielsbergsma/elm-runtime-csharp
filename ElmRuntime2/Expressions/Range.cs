@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ElmRuntime2.Parser.Values;
 using ElmRuntime2.Exceptions;
+using ElmRuntime2.Values;
+using ElmRuntime2.Parser;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class Range : Expression
     {
@@ -49,14 +50,14 @@ namespace ElmRuntime2.Parser
 
         public static ParseResult<Range> Parse(TokenStream stream, int position)
         {
-            var parsed = Parser.ParseList(stream, position);
+            var parsed = ParserHelper.ParseList(stream, position);
             if (!parsed.Success)
             {
                 return new ParseResult<Range>(false, default(Range), parsed.Position);
             }
 
-            var from = Parser.ParseExpression(parsed.Value[0], 0);
-            var to = Parser.ParseExpression(parsed.Value[0], from.Position + 1);
+            var from = ParserHelper.ParseExpression(parsed.Value[0], 0);
+            var to = ParserHelper.ParseExpression(parsed.Value[0], from.Position + 1);
 
             if (from.Success && to.Success)
             {

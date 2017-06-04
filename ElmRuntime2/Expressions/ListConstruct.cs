@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ElmRuntime2.Parser.Values;
 using ElmRuntime2.Exceptions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Values;
+using ElmRuntime2.Parser;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class ListConstruct : Expression
     {
@@ -32,7 +33,7 @@ namespace ElmRuntime2.Parser
 
         public static ParseResult<ListConstruct> Parse(TokenStream stream, int position)
         {
-            var parsed = Parser.ParseList(stream, position);
+            var parsed = ParserHelper.ParseList(stream, position);
             if (!parsed.Success)
             {
                 return new ParseResult<ListConstruct>(false, default(ListConstruct), parsed.Position);
@@ -41,7 +42,7 @@ namespace ElmRuntime2.Parser
             var expressions = new List<Expression>();
             foreach (var tokens in parsed.Value)
             {
-                var expression = Parser.ParseExpression(tokens, 0);
+                var expression = ParserHelper.ParseExpression(tokens, 0);
                 if (!expression.Success)
                 {
                     throw new ParserException($"Unable to parse list item expression near line {stream.LineOf(position)}");

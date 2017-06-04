@@ -1,6 +1,7 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
-using ElmRuntime2.Parser.Values;
+using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace ElmRuntime2.Parser
                 //expression
                 else
                 {
-                    var parsed = Parser.ParseLine(stream, position);
+                    var parsed = ParserHelper.ParseLine(stream, position);
                     if (parsed.Success)
                     {
                         if (parsed.Value is Function)

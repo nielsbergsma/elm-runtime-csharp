@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ElmRuntime2.Parser.Values;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Values;
+using ElmRuntime2.Parser;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class RecordConstruct : Expression
     {
@@ -34,12 +35,12 @@ namespace ElmRuntime2.Parser
 
         public static ParseResult<RecordConstruct> Parse(TokenStream stream, int position)
         {
-            var parsed = Parser.ParseList(stream, position);
+            var parsed = ParserHelper.ParseList(stream, position);
 
             var fieldExpressions = new Dictionary<string, Expression>();
             foreach (var assignment in parsed.Value)
             {
-                var fieldExpression = Parser.ParseExpression(assignment, 2);
+                var fieldExpression = ParserHelper.ParseExpression(assignment, 2);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

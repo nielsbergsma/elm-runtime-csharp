@@ -1,23 +1,25 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser.Values
+namespace ElmRuntime2.Values
 {
-    public class Boolean : Value
+    public class String : Value
     {
-        private readonly bool value;
+        private readonly string value;
 
-        public Boolean(bool value)
+        public String(string value)
         {
             this.value = value;
         }
 
-        public bool Value
+        public string Value
         {
             get { return value; }
         }
@@ -29,41 +31,38 @@ namespace ElmRuntime2.Parser.Values
 
         public Value Op(Operator @operator)
         {
-            throw new RuntimeException($"Unknown operation for boolean {@operator}");
+            throw new RuntimeException($"Unknown operation for string {@operator}");
         }
 
         public Value Op(Operator @operator, Value argument)
         {
-            if (!(argument is Boolean))
+            if (!(argument is String))
             {
                 throw new RuntimeException("Incompatible types");
             }
 
-            var other = argument as Boolean;
+            var other = argument as String;
             switch (@operator)
             {
+                case Operator.Concat:
+                    return new String(value + other.value);
+
                 case Operator.Equal:
                     return new Boolean(value == other.value);
 
                 case Operator.NotEqual:
                     return new Boolean(value != other.value);
-
-                case Operator.And:
-                    return new Boolean(value && other.value);
-
-                case Operator.Or:
-                    return new Boolean(value || other.value);
             }
 
-            throw new RuntimeException($"Unknown operation for boolean {@operator}");
+            throw new RuntimeException($"Unknown operation for string {@operator}");
         }
 
         public bool SameAs(Value other)
         {
-            var otherBoolean = other as Boolean;
+            var otherString = other as String;
 
-            return otherBoolean != null
-                && otherBoolean.value == value;
+            return otherString != null
+                && otherString.value == value;
         }
     }
 }

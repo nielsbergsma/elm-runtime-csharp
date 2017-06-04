@@ -1,26 +1,24 @@
 ﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
+using ElmRuntime2.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser.Values
+namespace ElmRuntime2.Values
 {
-    public class Record : Value
+    public class Union : Value
     {
-        private readonly Dictionary<string, Value> fields;
+        private readonly string constructor;
+        private readonly Value[] values;
 
-        public Record()
-            : this (new Dictionary<string, Value>())
+        public Union(string constructor, Value[] values)
         {
-
-        }
-
-        private Record(Dictionary<string, Value> fields)
-        {
-            this.fields = fields;
+            this.constructor = constructor;
+            this.values = values;
         }
 
         public Expression Evaluate(Value[] arguments, Scope scope)
@@ -28,19 +26,9 @@ namespace ElmRuntime2.Parser.Values
             return this;
         }
 
-        public Record SetFields(RecordFieldValue[] values)
+        public Value Get(int index)
         {
-            var fields = new Dictionary<string, Value>(this.fields);
-            foreach (var value in values)
-            {
-                fields[value.Name] = value.Value;
-            }
-            return new Record(fields);
-        }
-
-        public bool TryGetValue(string name, out Value value)
-        {
-            return fields.TryGetValue(name, out value);
+            return index < values.Length ? values[index] : null;
         }
 
         public Value Op(Operator @operator)
@@ -64,21 +52,19 @@ namespace ElmRuntime2.Parser.Values
 
         public bool SameAs(Value other)
         {
-            var otherRecord = other as Record;
-            if (otherRecord == null || otherRecord.fields.Count != fields.Count)
+            var otherUnion = other as Union;
+            if (otherUnion == null || otherUnion.constructor == constructor || otherUnion.values.Length != values.Length)
             {
                 return false;
             }
 
-            foreach (var otherField in otherRecord.fields)
+            for (var v = 0; v < values.Length; v++)
             {
-                var thisFieldValue = default(Value);
-                if (!fields.TryGetValue(otherField.Key, out thisFieldValue) || !otherField.Value.SameAs(thisFieldValue))
+                if (!otherUnion.values[v].SameAs(values[v]))
                 {
                     return false;
                 }
             }
-
             return true;
         }
     }

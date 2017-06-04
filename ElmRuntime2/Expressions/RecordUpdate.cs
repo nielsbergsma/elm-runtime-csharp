@@ -1,13 +1,14 @@
 ﻿using ElmRuntime2.Exceptions;
 using ElmRuntime2.Lexer;
-using ElmRuntime2.Parser.Values;
+using ElmRuntime2.Parser;
+using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2.Expressions
 {
     public class RecordUpdate : Expression
     {
@@ -47,7 +48,7 @@ namespace ElmRuntime2.Parser
                 throw new ParserException($"Unable to parse record update near line { stream.LineOf(position) }");
             }
 
-            var parsed = Parser.ParseList(stream, position);
+            var parsed = ParserHelper.ParseList(stream, position);
 
             var name = stream.At(position + 1).Content;
             var fieldExpressions = new Dictionary<string, Expression>();
@@ -56,7 +57,7 @@ namespace ElmRuntime2.Parser
             {
                 var assignment = parsed.Value[0];
                 var fieldName = assignment.At(2).Content;
-                var fieldExpression = Parser.ParseExpression(assignment, 4);
+                var fieldExpression = ParserHelper.ParseExpression(assignment, 4);
 
                 fieldExpressions[fieldName] = fieldExpression.Value;
             }
@@ -64,7 +65,7 @@ namespace ElmRuntime2.Parser
             for (var fe = 1; fe < parsed.Value.Length; fe++)
             {
                 var assignment = parsed.Value[fe];
-                var fieldExpression = Parser.ParseExpression(assignment, 2);
+                var fieldExpression = ParserHelper.ParseExpression(assignment, 2);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

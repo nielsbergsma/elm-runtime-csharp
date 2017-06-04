@@ -1,11 +1,12 @@
-﻿using ElmRuntime2.Parser.Values;
+﻿using ElmRuntime2.Parser;
+using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmRuntime2.Parser
+namespace ElmRuntime2
 {
     public class Scope
     {
