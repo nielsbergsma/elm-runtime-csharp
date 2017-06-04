@@ -72,7 +72,7 @@ namespace ElmRuntime2.Parser.Values
                     return new Integer(value << other.value);
 
                 case Operator.ShiftRight:
-                    return new Integer(value << other.value);
+                    return new Integer(value >> other.value);
 
                 case Operator.Lesser:
                     return new Boolean(value < other.value);

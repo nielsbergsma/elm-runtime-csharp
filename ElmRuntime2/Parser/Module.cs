@@ -30,21 +30,21 @@ namespace ElmRuntime2.Parser
             while (!stream.IsAtEndOfStream(position))
             {
                 //module header
-                if (stream.IsAt(position + 0, TokenType.Module))
+                if (stream.IsAt(position, TokenType.Module))
                 {
                     position = module.ParseNameAndExposing(stream, position);
                 }
-                else if (stream.IsAt(position + 0, TokenType.Port, TokenType.Module))
+                else if (stream.IsAt(position, TokenType.Port, TokenType.Module))
                 {
                     position = module.ParseNameAndExposing(stream, position + 1);
                 }
                 //import
-                else if (stream.IsAt(position + 0, TokenType.Import))
+                else if (stream.IsAt(position, TokenType.Import))
                 {
                     position = module.ParseImport(stream, position);
                 }
                 //annotation
-                else if (stream.IsAt(position + 0, TokenType.Identifier, TokenType.Colon))
+                else if (stream.IsAt(position, TokenType.Identifier, TokenType.Colon))
                 {
                     position = stream.SkipUntilNextLine(position);
                 }
@@ -71,26 +71,20 @@ namespace ElmRuntime2.Parser
 
         private int ParseNameAndExposing(TokenStream stream, int position)
         {
-            name = stream.At(position + 1).Content;
-
-            if (!stream.IsAt(position + 2, TokenType.Exposing))
+            if (stream.IsAt(position + 1, TokenType.Identifier))
             {
-                return position + 2;
+                name = stream.At(position + 1).Content;
+                position += 2;
             }
 
-            //expose everything
-            if (stream.IsAt(position + 3, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))
+            if (stream.IsAt(position, TokenType.Exposing))
             {
-                exposing.Add(new ModuleUnresolvedExpose(".."));
-                return position + 6;
-            }
-            //expose list
-            else
-            {
-                var parsed = ModuleExposes.Parse(stream, position + 3);
+                var parsed = ModuleExposes.Parse(stream, position);
                 exposing.AddRange(parsed.Value);
-                return parsed.Position;
+                position = parsed.Position;
             }
+
+            return position;
         }
 
         private int ParseImport(TokenStream stream, int position)

@@ -13,15 +13,14 @@ namespace ElmRuntime2.Parser
         {
             var list = new List<TokenStream>();
             var seperator = TokenType.Comma;
-            var start = position;
             var stop = TokenType.RightParen;
 
-            if (start >= stream.Length)
+            if (position >= stream.Length)
             {
                 return new ParseResult<TokenStream[]>(false, new TokenStream[0], position);
             }
 
-            switch(stream.At(start).Type)
+            switch(stream.At(position).Type)
             {
                 case TokenType.LeftParen:
                     stop = TokenType.RightParen;
