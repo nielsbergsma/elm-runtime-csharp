@@ -47,7 +47,7 @@ namespace ElmRuntime2.Expressions
             var record = value as Record;
             foreach(var name in names)
             {
-                if (record.TryGetValue(name, out value))
+                if (record.TryGet(name, out value))
                 {
                     scope.SetValue(name, value);
                 }
@@ -74,7 +74,7 @@ namespace ElmRuntime2.Expressions
             var tuple = value as Values.Tuple;
             for(var item = 0; item < names.Length; item++)
             {
-                if (tuple.TryGetValue(item, out value))
+                if (tuple.TryGet(item, out value))
                 {
                     scope.SetValue(names[item], value);
                 }

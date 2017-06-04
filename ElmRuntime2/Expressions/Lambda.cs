@@ -22,16 +22,16 @@ namespace ElmRuntime2.Expressions
 
         public Expression Evaluate(Value[] arguments, Scope scope)
         {
-            var expressionScope = new Scope(scope);
+            var lambdaScope = new Scope(scope);
 
             foreach(var constant in constants)
             {
-                expressionScope.SetValue(constant.Key, constant.Value);
+                lambdaScope.SetValue(constant.Key, constant.Value);
             }
 
             for (var a = 0; a < arguments.Length && a < this.arguments.Length; a++)
             {
-                this.arguments[a].SetScope(expressionScope, arguments[a]);
+                this.arguments[a].SetScope(lambdaScope, arguments[a]);
             }
 
             if (arguments.Length < this.arguments.Length)
@@ -42,10 +42,10 @@ namespace ElmRuntime2.Expressions
                     newArguments.Add(this.arguments[a]);
                 }
 
-                return new Lambda(expressionScope.Unwrap(), newArguments.ToArray(), expression);
+                return new Lambda(lambdaScope.Unwrap(), newArguments.ToArray(), expression);
             }
 
-            return expression.Evaluate(arguments, expressionScope);
+            return expression.Evaluate(arguments, lambdaScope);
         }
     }
 }

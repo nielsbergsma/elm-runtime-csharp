@@ -30,7 +30,7 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public Record SetFields(RecordFieldValue[] values)
+        public Record Set(RecordFieldValue[] values)
         {
             var fields = new Dictionary<string, Value>(this.fields);
             foreach (var value in values)
@@ -40,7 +40,7 @@ namespace ElmRuntime2.Values
             return new Record(fields);
         }
 
-        public bool TryGetValue(string name, out Value value)
+        public bool TryGet(string name, out Value value)
         {
             return fields.TryGetValue(name, out value);
         }

@@ -38,7 +38,7 @@ namespace ElmRuntime2.Expressions
                 fieldValues.Add(field);
             }
 
-            return record.SetFields(fieldValues.ToArray());
+            return record.Set(fieldValues.ToArray());
         }
 
         public static ParseResult<RecordUpdate> Parse(TokenStream stream, int position)

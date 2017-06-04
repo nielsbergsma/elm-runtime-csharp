@@ -24,19 +24,7 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public Value Value(int index)
-        {
-            if (index < values.Length)
-            {
-                return values[index];
-            }
-            else
-            {
-                throw new RuntimeException("Index bigger than size tuple");
-            }
-        }
-
-        public bool TryGetValue(int item, out Value value)
+        public bool TryGet(int item, out Value value)
         {
             if (item < values.Length)
             {

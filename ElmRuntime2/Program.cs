@@ -14,8 +14,8 @@ namespace ElmRuntime2
     {
         static void Main(string[] args)
         {
-            var input = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
-            var lexer = ElmLexer.Lex(input);
+            var source = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
+            var lexer = ElmLexer.Lex(source);
             //var position = 0;
             //for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
             //{

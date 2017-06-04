@@ -26,9 +26,18 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public Value Get(int index)
+        public bool TryGet(int index, out Value value)
         {
-            return index < values.Length ? values[index] : null;
+            if (index < values.Length)
+            {
+                value = values[index];
+                return true;
+            }
+            else
+            {
+                value = default(Value);
+                return false;
+            }
         }
 
         public Value Op(Operator @operator)
