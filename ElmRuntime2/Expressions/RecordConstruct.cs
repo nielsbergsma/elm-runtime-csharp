@@ -18,7 +18,7 @@ namespace ElmRuntime2.Expressions
             this.fieldExpressions = fieldExpressions;
         } 
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             var record = new Record();
 

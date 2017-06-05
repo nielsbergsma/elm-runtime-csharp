@@ -24,7 +24,7 @@ namespace ElmRuntime2.Values
             get { return values; }
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             return this;
         }

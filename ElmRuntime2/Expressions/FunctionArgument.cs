@@ -10,7 +10,7 @@ namespace ElmRuntime2.Expressions
 {
     public interface FunctionArgument
     {
-        void SetScope(Scope scope, Value value);
+        void SetScope(Scope scope, Expression value);
     }
 
     public class FunctionNamedArgument : FunctionArgument
@@ -22,9 +22,9 @@ namespace ElmRuntime2.Expressions
             this.name = name;
         }
 
-        public void SetScope(Scope scope, Value value)
+        public void SetScope(Scope scope, Expression value)
         {
-            scope.SetValue(name, value);
+            scope.Set(name, value);
         }
     }
 
@@ -37,19 +37,25 @@ namespace ElmRuntime2.Expressions
             this.names = names;
         }
 
-        public void SetScope(Scope scope, Value value)
+        public void SetScope(Scope scope, Expression value)
         {
             if (!(value is Record))
             {
                 throw new RuntimeException($"Expected record value to deconstruct, got {value.GetType()}");
             }
 
+            var field = default(Value);
             var record = value as Record;
+
             foreach(var name in names)
             {
-                if (record.TryGet(name, out value))
+                if (record.TryGet(name, out field) && field != null)
                 {
-                    scope.SetValue(name, value);
+                    scope.Set(name, value);
+                }
+                else
+                {
+                    throw new RuntimeException($"Record field {name} not a value");
                 }
             }
         }
@@ -64,19 +70,25 @@ namespace ElmRuntime2.Expressions
             this.names = names;
         }
 
-        public void SetScope(Scope scope, Value value)
+        public void SetScope(Scope scope, Expression value)
         {
             if (!(value is Values.Tuple))
             {
                 throw new RuntimeException($"Expected tuple value to deconstruct, got {value.GetType()}");
             }
 
+            var field = default(Value);
             var tuple = value as Values.Tuple;
-            for(var item = 0; item < names.Length; item++)
+
+            for (var item = 0; item < names.Length; item++)
             {
-                if (tuple.TryGet(item, out value))
+                if (tuple.TryGet(item, out field) && field != null)
                 {
-                    scope.SetValue(names[item], value);
+                    scope.Set(names[item], value);
+                }
+                else
+                {
+                    throw new RuntimeException($"Tuple item {item + 1} not a value");
                 }
             }
         }

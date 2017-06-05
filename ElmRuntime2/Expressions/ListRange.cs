@@ -20,7 +20,7 @@ namespace ElmRuntime2.Expressions
             this.to = to;
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             var fromValue = from.Evaluate(arguments, scope);
             if (!(fromValue is Integer))

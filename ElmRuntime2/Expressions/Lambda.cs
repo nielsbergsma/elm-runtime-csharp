@@ -9,24 +9,24 @@ namespace ElmRuntime2.Expressions
 {
     public class Lambda : Expression
     {
-        private readonly Dictionary<string, Value> constants;
+        private readonly Dictionary<string, Expression> constants;
         private readonly FunctionArgument[] arguments;
         private readonly Expression expression;
 
-        public Lambda(Dictionary<string, Value> constants, FunctionArgument[] arguments, Expression expression)
+        public Lambda(Dictionary<string, Expression> constants, FunctionArgument[] arguments, Expression expression)
         {
             this.constants = constants;
             this.arguments = arguments;
             this.expression = expression;
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             var lambdaScope = new Scope(scope);
 
             foreach(var constant in constants)
             {
-                lambdaScope.SetValue(constant.Key, constant.Value);
+                lambdaScope.Set(constant.Key, constant.Value);
             }
 
             for (var a = 0; a < arguments.Length && a < this.arguments.Length; a++)

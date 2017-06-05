@@ -76,6 +76,12 @@ namespace ElmRuntime2.Parser
 
         public Expression Evaluate(string name, Value[] arguments, Scope scope)
         {
+            //bring imports and expressions into scope
+            foreach(var expression in expressions)
+            {
+                scope.Set(expression.Key, expression.Value);
+            }
+
             return expressions[name].Evaluate(arguments, scope);
         }
 

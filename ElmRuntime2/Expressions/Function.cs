@@ -28,7 +28,7 @@ namespace ElmRuntime2.Expressions
             get { return name; }
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             var expressionScope = new Scope(scope);
 

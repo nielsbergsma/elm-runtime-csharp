@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\ParserException.cs" />
+    <Compile Include="Expressions\Invocation.cs" />
+    <Compile Include="Expressions\TupleConstruct.cs" />
     <Compile Include="Lexer\CharLexer.cs" />
     <Compile Include="Lexer\CommentIgnoreLexer.cs" />
     <Compile Include="Lexer\IdentifierLexer.cs" />

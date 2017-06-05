@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Parser;
+﻿using ElmRuntime2.Expressions;
+using ElmRuntime2.Parser;
 using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace ElmRuntime2
     public class Scope
     {
         private readonly Scope parent;
-        private readonly Dictionary<string, Value> values;
+        private readonly Dictionary<string, Expression> values;
 
         public Scope()
             : this(null)
@@ -22,21 +23,21 @@ namespace ElmRuntime2
         public Scope(Scope parent)
         {
             this.parent = parent;
-            this.values = new Dictionary<string, Value>();
+            this.values = new Dictionary<string, Expression>();
         }
 
-        public void SetValue(string name, Value value)
+        public void Set(string name, Expression value)
         {
             values[name] = value;
         }
 
-        public bool TryGetValue(string name, out Value value)
+        public bool TryGet(string name, out Expression value)
         {
             if (values.TryGetValue(name, out value))
             {
                 return true;
             }
-            else if (parent != null && parent.TryGetValue(name, out value))
+            else if (parent != null && parent.TryGet(name, out value))
             {
                 return true;
             }
@@ -47,9 +48,9 @@ namespace ElmRuntime2
             }
         }
 
-        public Dictionary<string, Value> Unwrap()
+        public Dictionary<string, Expression> Unwrap()
         {
-            return new Dictionary<string, Value>(this.values);
+            return values;
         }
     }
 }

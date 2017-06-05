@@ -21,10 +21,10 @@ namespace ElmRuntime2.Expressions
             this.fieldExpressions = fieldExpressions;
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
-            var recordValue = default(Value);
-            if (!scope.TryGetValue(name, out recordValue) || !(recordValue is Record))
+            var recordValue = default(Expression);
+            if (!scope.TryGet(name, out recordValue) || !(recordValue is Record))
             {
                 throw new RuntimeException($"Variable {name} is not a record");
             }

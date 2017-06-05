@@ -16,12 +16,12 @@ namespace ElmRuntime2
         {
             var source = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
             var lexer = ElmLexer.Lex(source);
-            //var position = 0;
-            //for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
-            //{
-            //    Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
-            //}
-            //lexer.Reset();
+            var position = 0;
+            for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
+            {
+                Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
+            }
+            lexer.Reset();
 
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var tokens = new TokenStream(lexer);
@@ -29,12 +29,12 @@ namespace ElmRuntime2
 
             var scope = new Scope();
             var foo = new Record();
-            scope.SetValue("foo", foo);
+            scope.Set("foo", foo);
 
             var result = module.Evaluate("main", new Value[0], scope);
 
             stopwatch.Stop();
-            Console.WriteLine($"Lexing / parsing took={stopwatch.ElapsedMilliseconds}ms, result={result}");
+            Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms, result={result}");
         }
     }
 }

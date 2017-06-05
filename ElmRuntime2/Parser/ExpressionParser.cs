@@ -101,6 +101,53 @@ namespace ElmRuntime2.Parser
                     return new ParseResult<Expression>(true, recordConstruct.Value, parsed.Position);
                 }
             }
+            //tuple, parentheses, infix operator 
+            else if (stream.IsAt(position, TokenType.LeftParen))
+            {
+                var parsed = ParserHelper.ParseArray(stream, position);
+
+                //tuple
+                if (stream.IsAt(position, TokenType.LeftParen, TokenType.Comma) || parsed.Value.Length > 1)
+                {
+                    var tupleConstruct = TupleConstruct.Parse(stream, position);
+                    if (!tupleConstruct.Success)
+                    {
+                        throw new ParserException($"Unable to parse tuple near line {stream.LineOf(position)}");
+                    }
+                    return new ParseResult<Expression>(true, tupleConstruct.Value, parsed.Position);
+                }
+                //parentheses, infix operator
+                else if (parsed.Value.Length == 1)
+                {
+
+                }
+            }
+            else if (stream.IsAt(position, TokenType.Identifier))
+            {
+                var name = stream.At(position).Content;
+                if (stream.IsAt(position + 1, TokenType.Dot, TokenType.Identifier))
+                {
+                    name += "." + stream.At(position + 2).Content;
+                    position += 2;
+                }
+
+                var argumentsStart = position + 1;
+                var argumentsEnd = stream.SkipToNextExpression(position);
+                var arguments = new List<Expression>();
+
+                for (var argumentPosition = argumentsStart; argumentPosition < argumentsEnd;)
+                {
+                    var argument = Parse(stream, argumentPosition);
+                    if (argument.Success)
+                    {
+                        arguments.Add(argument.Value);
+                    }
+                    argumentPosition = argument.Position;
+                }
+
+                var invocation = new Invocation(name, arguments.ToArray());
+                return new ParseResult<Expression>(true, invocation, argumentsEnd);
+            }
 
             return new ParseResult<Expression>(false, default(Expression), 0);
         }

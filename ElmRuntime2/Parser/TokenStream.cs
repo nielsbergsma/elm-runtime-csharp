@@ -68,7 +68,7 @@ namespace ElmRuntime2.Parser
 
             return true;
         }
-
+        
         public bool IsAnyAt(int position, params TokenType[] types)
         {
             if (position >= tokens.Length)
@@ -120,18 +120,37 @@ namespace ElmRuntime2.Parser
             }
         }
 
-        public int SkipToNextExpression(int position, int columnOffset = 0)
+        public int IdententationOfExpressionStart(int position)
+        {
+            if (position >= tokens.Length)
+            {
+                return 0;
+            }
+
+            var line = tokens[position].Line;
+            var identation = tokens[position].Column;
+
+            for (; position >= 0 && tokens[position].Line == line; position--)
+            {
+                identation = tokens[position].Column;
+            }
+
+            return identation;
+        }
+
+        public int SkipToNextExpression(int position)
         {
             if (position >= tokens.Length)
             {
                 return tokens.Length - 1;
             }
 
-            var line = tokens[position].Line;
-            while (position < tokens.Length && (tokens[position].Line == line || tokens[position].Column <= columnOffset))
+            var identation = IdententationOfExpressionStart(position);
+
+            position++;
+            while (position < tokens.Length && tokens[position].Column > identation)
             {
                 position++;
-                //forward position
             }
 
             return position;

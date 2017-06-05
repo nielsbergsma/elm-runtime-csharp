@@ -19,7 +19,7 @@ namespace ElmRuntime2.Values
             this.values = values;
         }
 
-        public Expression Evaluate(Value[] arguments, Scope scope)
+        public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             return this;
         }
