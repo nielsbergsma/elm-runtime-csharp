@@ -34,34 +34,27 @@ namespace ElmRuntime2
 
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            var list = new List(new[] {
-                new Integer(4),
+            var list = new List(
+                new Integer(4)
                 //new Integer(2),
                 //new Integer(2),
                 //new Integer(2),
-            });
+            );
 
-            //var tuple = new Values.Tuple(new Value[] {
+            //var tuple = new Values.Tuple(
             //    new Values.Integer(1),
             //    new Values.String("yes"),
             //    new Values.Integer(99),
-            //});
+            //);
 
             //var record = new Values.Record()
             //    .Set("foo", new Values.Integer(1))
             //    .Set("bar", new Values.String("you're welcome"))
             //    .Set("qux", new Values.Boolean(false));
 
-            var union = new Union("Some", new Expressions.Expression[]
-            {
-                new Values.Integer(1),
-                new Values.Integer(-99)
-            });
+            var union = new UnionConstructor("Some", new Integer(1), new Integer(-99));
 
-            var tuple = new Values.Tuple(new Value[] {
-                union,
-                new Values.String("yes"),
-            });
+            var tuple = new Values.Tuple(union, new Values.String("yes"));
 
             var result = module.Evaluate("main", new Value[] { tuple }, scope);
 

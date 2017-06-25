@@ -14,7 +14,7 @@ namespace ElmRuntime2.Values
     {
         private readonly Expression[] values;
 
-        public List(Expression[] values)
+        public List(params Expression[] values)
         {
             this.values = values;
         }

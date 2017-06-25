@@ -14,7 +14,7 @@ namespace ElmRuntime2.Values
     {
         private readonly Expression[] values;
 
-        public Tuple(Value[] values)
+        public Tuple(params Value[] values)
         {
             this.values = values;
         }

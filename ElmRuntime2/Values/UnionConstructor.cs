@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Values
 {
-    public class Union : Value
+    public class UnionConstructor : Value
     {
         private readonly string constructor;
         private readonly Expression[] values;
 
-        public Union(string constructor, Expression[] values)
+        public UnionConstructor(string constructor, params Expression[] values)
         {
             this.constructor = constructor;
             this.values = values;
@@ -48,7 +48,7 @@ namespace ElmRuntime2.Values
 
         public bool OperatorEquals(Expression op2)
         {
-            var other = op2 as Union;
+            var other = op2 as UnionConstructor;
             if (other == null || other.values.Length != values.Length)
             {
                 return false;

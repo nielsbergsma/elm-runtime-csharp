@@ -35,7 +35,7 @@ namespace ElmRuntime2.Values
             return Set(new[] { new RecordFieldValue(name, value) });
         }
 
-        public Record Set(RecordFieldValue[] values)
+        public Record Set(params RecordFieldValue[] values)
         {
             var fields = new Dictionary<string, Expression>(this.fields);
             foreach (var value in values)

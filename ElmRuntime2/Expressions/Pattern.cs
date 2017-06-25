@@ -214,7 +214,7 @@ namespace ElmRuntime2.Expressions
 
         public Expression Evaluate(Expression[] arguments, Scope scope)
         {
-            var union = arguments[0] as Union;
+            var union = arguments[0] as UnionConstructor;
             if (union.Constructor != constructor)
             {
                 return new Values.Boolean(false);
