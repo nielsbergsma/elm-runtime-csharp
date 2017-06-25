@@ -160,6 +160,11 @@ namespace ElmRuntime2.Parser
                 var @case = new Case(subject, patterns.ToArray());
                 return new ParseResult<Expression>(@case, start + position);
             }
+            else if (stream.IsAt(position, TokenType.Let))
+            {
+                var parsed = LetParser.ParseLet(stream, position, module);
+                return new ParseResult<Expression>(parsed.Success, parsed.Value, parsed.Position);
+            }
             else if (stream.IsAt(position, TokenType.If))
             {
                 var condition = ParseExpression(stream, position + 1, module);

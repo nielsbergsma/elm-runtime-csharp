@@ -57,7 +57,6 @@ namespace ElmRuntime2
             //var tuple = new Values.Tuple(union, new Values.String("yes"));
 
             var argument = new Integer(3);
-
             var result = module.Evaluate("main", new Value[] { argument }, scope);
 
             stopwatch.Stop();
@@ -65,3 +64,4 @@ namespace ElmRuntime2
          }
     }
 }
+
