@@ -13,10 +13,10 @@ namespace ElmRuntime2.Expressions
     public class Function : Expression
     {
         private readonly string name;
-        private readonly FunctionArgument[] arguments;
+        private readonly Pattern[] arguments;
         private readonly Expression expression;
 
-        public Function(string name, FunctionArgument[] arguments, Expression expression)
+        public Function(string name, Pattern[] arguments, Expression expression)
         {
             this.name = name;
             this.arguments = arguments;
@@ -35,13 +35,13 @@ namespace ElmRuntime2.Expressions
             //bring arguments into scope
             for (var a = 0; a < arguments.Length && a < this.arguments.Length; a++)
             {
-                this.arguments[a].SetScope(expressionScope, arguments[a]);
+                this.arguments[a].Evaluate(new Expression[] { arguments[a] }, expressionScope);
             }
 
             //curry function
             if (arguments.Length < this.arguments.Length)
             {
-                var newArguments = new List<FunctionArgument>();
+                var newArguments = new List<Pattern>();
                 for (var a = arguments.Length; a < this.arguments.Length; a++)
                 {
                     newArguments.Add(this.arguments[a]);
@@ -62,6 +62,7 @@ namespace ElmRuntime2.Expressions
             if (stream.IsAt(position, TokenType.Identifier))
             {
                 name = stream.At(position).Content;
+                position++;
             }
             //operator
             else if (stream.IsAt(position, TokenType.LeftParen) && stream.ContainsInExpression(position + 1, TokenType.RightParen))
@@ -77,56 +78,14 @@ namespace ElmRuntime2.Expressions
                 throw new ParserException($"Expected idenfier or operator start function (line {stream.LineOf(position)})");
             }
 
-            var arguments = new List<FunctionArgument>();
-            for(position++; position < stream.Length && !stream.IsAt(position, TokenType.Assign);)
+            var arguments = new List<Pattern>();
+            while (!stream.IsAt(position, TokenType.Assign))
             {
-                //regular argument
-                if (stream.IsAt(position, TokenType.Identifier))
-                {
-                    var argumentName = stream.At(position).Content;
-                    arguments.Add(new FunctionNamedArgument(argumentName));
-                    position++;
-                }
-                //deconstructive tuple
-                else if (stream.IsAt(position, TokenType.LeftParen))
-                {
-                    var parsed =  ParserHelper.ParseArray(stream, position);
-                    var names = new List<string>();
-
-                    foreach(var argument in parsed.Value)
-                    {
-                        if (argument.IsAt(0, TokenType.Identifier))
-                        {
-                            names.Add(argument.At(0).Content);
-                        }
-                    }
-
-                    arguments.Add(new FunctionDeconstructiveTupleArgument(names.ToArray()));
-                    position = parsed.Position;
-                }
-                //deconstructive record
-                else if (stream.IsAt(position, TokenType.LeftBrace))
-                {
-                    var parsed = ParserHelper.ParseArray(stream, position);
-                    var names = new List<string>();
-
-                    foreach (var argument in parsed.Value)
-                    {
-                        if (argument.IsAt(0, TokenType.Identifier))
-                        {
-                            names.Add(argument.At(0).Content);
-                        }
-                    }
-
-                    arguments.Add(new FunctionDeconstructiveRecordArgument(names.ToArray()));
-                    position = parsed.Position;
-                }
-                else
-                {
-                    throw new ParserException($"Unsupported function argument encountered at line {stream.LineOf(position)}");
-                }
+                var argumentParsed = PatternParser.ParsePattern(stream, position);
+                arguments.Add(argumentParsed.Value);
+                position = argumentParsed.Position;
             }
-
+                      
             var parsedExpression = ExpressionParser.Parse(stream, position + 1, module);
             if (!parsedExpression.Success)
             {

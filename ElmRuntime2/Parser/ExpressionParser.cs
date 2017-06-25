@@ -104,7 +104,8 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected token while parsing case expression");
                 }
 
-                var subject = new ScopeAccess(stream.At(position + 1).Content);
+                var subjectParsed = Parse(stream, position + 1, module);
+                var subject = subjectParsed.Value;
 
                 if (!stream.IsAt(position + 2, TokenType.Of))
                 {

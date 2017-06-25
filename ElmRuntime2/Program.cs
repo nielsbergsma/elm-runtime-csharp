@@ -23,7 +23,6 @@ namespace ElmRuntime2
                 Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
             }
 
-
             //add = \n -> ((\m n-> m + n) n)
             lexer.Reset();
 
@@ -56,7 +55,7 @@ namespace ElmRuntime2
             var union = new Union("Some", new Expressions.Expression[]
             {
                 new Values.Integer(1),
-                new Values.Integer(-88)
+                new Values.Integer(-99)
             });
 
             var result = module.Evaluate("main", new Value[] { union }, scope);

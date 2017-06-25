@@ -10,10 +10,10 @@ namespace ElmRuntime2.Expressions
     public class Lambda : Expression
     {
         private readonly Dictionary<string, Expression> constants;
-        private readonly FunctionArgument[] arguments;
+        private readonly Pattern[] arguments;
         private readonly Expression expression;
 
-        public Lambda(Dictionary<string, Expression> constants, FunctionArgument[] arguments, Expression expression)
+        public Lambda(Dictionary<string, Expression> constants, Pattern[] arguments, Expression expression)
         {
             this.constants = constants;
             this.arguments = arguments;
@@ -23,7 +23,6 @@ namespace ElmRuntime2.Expressions
         public Expression Evaluate(Expression[] arguments, Scope scope)
         {
             var lambdaScope = new Scope(scope);
-
             foreach(var constant in constants)
             {
                 lambdaScope.Set(constant.Key, constant.Value);
@@ -31,12 +30,12 @@ namespace ElmRuntime2.Expressions
 
             for (var a = 0; a < arguments.Length && a < this.arguments.Length; a++)
             {
-                this.arguments[a].SetScope(lambdaScope, arguments[a]);
+                this.arguments[a].Evaluate(new Expression[] { arguments[a] }, lambdaScope);
             }
 
             if (arguments.Length < this.arguments.Length)
             {
-                var newArguments = new List<FunctionArgument>();
+                var newArguments = new List<Pattern>();
                 for (var a = arguments.Length; a < this.arguments.Length; a++)
                 {
                     newArguments.Add(this.arguments[a]);

@@ -50,7 +50,6 @@
     <Compile Include="Expressions\If.cs" />
     <Compile Include="Expressions\Invocation.cs" />
     <Compile Include="Expressions\Pattern.cs" />
-    <Compile Include="Expressions\ScopeAccess.cs" />
     <Compile Include="Expressions\TupleConstruct.cs" />
     <Compile Include="Lexer\CharLexer.cs" />
     <Compile Include="Lexer\CommentIgnoreLexer.cs" />
@@ -74,7 +73,6 @@
     <Compile Include="Lexer\TokenType.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Function.cs" />
-    <Compile Include="Expressions\FunctionArgument.cs" />
     <Compile Include="Expressions\Lambda.cs" />
     <Compile Include="Expressions\ListConstruct.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
