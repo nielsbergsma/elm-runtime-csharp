@@ -29,37 +29,14 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public Value Op(Operator @operator)
+        public bool OperatorEquals(Expression op2)
         {
-            throw new RuntimeException($"Unknown operation for char {@operator}");
+            return op2 is Character && (op2 as Character).value == value;
         }
 
-        public Value Op(Operator @operator, Value argument)
+        public bool OperatorLesserThan(Expression op2)
         {
-            if (!(argument is Character))
-            {
-                throw new RuntimeException("Incompatible types");
-            }
-
-            var other = argument as Character;
-            switch (@operator)
-            {
-                case Operator.Equal:
-                    return new Boolean(value == other.value);
-
-                case Operator.NotEqual:
-                    return new Boolean(value != other.value);
-            }
-
-            throw new RuntimeException($"Unknown operation for char {@operator}");
-        }
-
-        public bool SameAs(Value other)
-        {
-            var otherChar = other as Character;
-
-            return otherChar != null
-                && otherChar.value == value;
+            return op2 is Character && (op2 as Character).value < value;
         }
     }
 }

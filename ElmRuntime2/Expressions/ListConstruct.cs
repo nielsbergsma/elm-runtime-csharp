@@ -31,7 +31,7 @@ namespace ElmRuntime2.Expressions
             return new List(values.ToArray());
         }
 
-        public static ParseResult<ListConstruct> Parse(TokenStream stream, int position)
+        public static ParseResult<ListConstruct> Parse(TokenStream stream, int position, Module module)
         {
             var parsed = ParserHelper.ParseArray(stream, position);
             if (!parsed.Success)
@@ -42,7 +42,7 @@ namespace ElmRuntime2.Expressions
             var expressions = new List<Expression>();
             foreach (var tokens in parsed.Value)
             {
-                var expression = ExpressionParser.Parse(tokens, 0);
+                var expression = ExpressionParser.Parse(tokens, 0, module);
                 if (!expression.Success)
                 {
                     throw new ParserException($"Unable to parse list item expression near line {stream.LineOf(position)}");

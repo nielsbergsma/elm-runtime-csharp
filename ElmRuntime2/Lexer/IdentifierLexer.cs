@@ -17,7 +17,7 @@ namespace ElmRuntime2.Lexer
         {
             this.source = source;
             this.head = new Stack<Token>();
-            this.pattern = new Regex(@"[a-z][a-z0-9_]*", RegexOptions.IgnoreCase);
+            this.pattern = new Regex(@"[a-z][a-z0-9_\.]*", RegexOptions.IgnoreCase);
         }
 
         public Maybe<Token> Next()

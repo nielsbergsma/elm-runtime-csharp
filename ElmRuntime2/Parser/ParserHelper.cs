@@ -92,5 +92,16 @@ namespace ElmRuntime2.Parser
 
             return false;
         }
+
+        public static bool IsCtorName(TokenStream stream, int position)
+        {
+            if (stream.IsAt(position, TokenType.Identifier))
+            {
+                var content = stream.At(position).Content;
+                return content.Length > 0 && char.IsUpper(content[0]);
+            }
+
+            return false;
+        }
     }
 }

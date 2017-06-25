@@ -35,7 +35,7 @@ namespace ElmRuntime2.Expressions
             return new Values.Tuple(values.ToArray());
         }
 
-        public static ParseResult<TupleConstruct> Parse(TokenStream stream, int position)
+        public static ParseResult<TupleConstruct> Parse(TokenStream stream, int position, Module module)
         {
             if (stream.IsAt(position, TokenType.LeftParen, TokenType.Comma))
             {
@@ -53,7 +53,7 @@ namespace ElmRuntime2.Expressions
                 var expressions = new List<Expression>();
                 for (var e = 0; e < numberOfElements; e++)
                 {
-                    var expression = ExpressionParser.Parse(stream, position);
+                    var expression = ExpressionParser.Parse(stream, position, module);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);
@@ -75,7 +75,7 @@ namespace ElmRuntime2.Expressions
                 var expressions = new List<Expression>();
                 foreach (var element in array.Value)
                 {
-                    var expression = ExpressionParser.Parse(element, 0);
+                    var expression = ExpressionParser.Parse(element, 0, module);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);

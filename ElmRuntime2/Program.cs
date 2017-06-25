@@ -16,25 +16,53 @@ namespace ElmRuntime2
         {
             var source = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
             var lexer = ElmLexer.Lex(source);
+
             var position = 0;
             for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
             {
                 Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
             }
+
+
+            //add = \n -> ((\m n-> m + n) n)
             lexer.Reset();
 
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var tokens = new TokenStream(lexer);
             var module = Module.Parse(tokens, 0);
-
             var scope = new Scope();
-            var foo = new Record();
-            scope.Set("foo", foo);
+            //var foo = new Record();
+            //scope.Set("foo", foo);
 
-            var result = module.Evaluate("main", new Value[0], scope);
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            var list = new List(new[] {
+                new Integer(4),
+                //new Integer(2),
+                //new Integer(2),
+                //new Integer(2),
+            });
+
+            //var tuple = new Values.Tuple(new Value[] {
+            //    new Values.Integer(1),
+            //    new Values.String("yes"),
+            //    new Values.Integer(99),
+            //});
+
+            //var record = new Values.Record()
+            //    .Set("foo", new Values.Integer(1))
+            //    .Set("bar", new Values.String("you're welcome"))
+            //    .Set("qux", new Values.Boolean(false));
+
+            var union = new Union("Some", new Expressions.Expression[]
+            {
+                new Values.Integer(1),
+                new Values.Integer(-88)
+            });
+
+            var result = module.Evaluate("main", new Value[] { union }, scope);
 
             stopwatch.Stop();
-            Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms, result={result}");
-        }
+            Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms");
+         }
     }
 }

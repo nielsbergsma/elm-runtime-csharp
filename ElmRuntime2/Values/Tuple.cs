@@ -12,7 +12,7 @@ namespace ElmRuntime2.Values
 {
     public class Tuple : Value
     {
-        private readonly Value[] values;
+        private readonly Expression[] values;
 
         public Tuple(Value[] values)
         {
@@ -24,7 +24,12 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public bool TryGet(int item, out Value value)
+        public Expression[] Values
+        {
+            get { return values; }
+        }
+
+        public bool TryGet(int item, out Expression value)
         {
             if (item < values.Length)
             {
@@ -38,42 +43,56 @@ namespace ElmRuntime2.Values
             }
         }
 
-        public Value Op(Operator @operator)
+        public bool OperatorEquals(Expression op2)
         {
-            throw new RuntimeException($"Unknown operation for tuple {@operator}");
-        }
-
-        public Value Op(Operator @operator, Value argument)
-        {
-            switch (@operator)
-            {
-                case Operator.Equal:
-                    return new Boolean(SameAs(argument));
-
-                case Operator.NotEqual:
-                    return new Boolean(!SameAs(argument));
-            }
-
-            throw new RuntimeException($"Unknown operation for tulpe {@operator}");
-        }
-
-        public bool SameAs(Value other)
-        {
-            var otherTuple = other as Tuple;
-            if (otherTuple == null || otherTuple.values.Length != values.Length)
+            var other = op2 as Tuple;
+            if (other == null || other.values.Length != values.Length)
             {
                 return false;
             }
 
             for (var v = 0; v < values.Length; v++)
             {
-                if (!otherTuple.values[v].SameAs(values[v]))
-                {
+                var thisValue = this.values[v] as Value;
+                var thatValue = other.values[v] as Value;
+
+                if (thisValue == null || thatValue == null || !thisValue.OperatorEquals(thatValue))
+                { 
                     return false;
                 }
             }
 
             return true;
+        }
+
+        public bool OperatorLesserThan(Expression op2)
+        {
+            var other = op2 as Tuple;
+            if (other == null || other.values.Length != values.Length)
+            {
+                return false;
+            }
+
+            for (var v = 0; v < values.Length; v++)
+            {
+                var thisValue = this.values[v] as Value;
+                var thatValue = other.values[v] as Value;
+
+                if (thisValue == null || thatValue == null)
+                {
+                    return false;
+                }
+                else if (thisValue.OperatorEquals(thatValue))
+                {
+                    continue;
+                }
+                else if (thisValue.OperatorLesserThan(thatValue))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

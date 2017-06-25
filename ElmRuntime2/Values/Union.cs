@@ -13,12 +13,18 @@ namespace ElmRuntime2.Values
     public class Union : Value
     {
         private readonly string constructor;
-        private readonly Value[] values;
+        private readonly Expression[] values;
 
-        public Union(string constructor, Value[] values)
+        public Union(string constructor, Expression[] values)
         {
             this.constructor = constructor;
             this.values = values;
+        }
+
+
+        public string Constructor
+        {
+            get { return constructor; }
         }
 
         public Expression Evaluate(Expression[] arguments, Scope scope)
@@ -26,7 +32,7 @@ namespace ElmRuntime2.Values
             return this;
         }
 
-        public bool TryGet(int index, out Value value)
+        public bool TryGet(int index, out Expression value)
         {
             if (index < values.Length)
             {
@@ -35,46 +41,36 @@ namespace ElmRuntime2.Values
             }
             else
             {
-                value = default(Value);
+                value = default(Expression);
                 return false;
             }
         }
 
-        public Value Op(Operator @operator)
+        public bool OperatorEquals(Expression op2)
         {
-            throw new RuntimeException($"Unknown operation for tuple {@operator}");
-        }
-
-        public Value Op(Operator @operator, Value argument)
-        {
-            switch (@operator)
-            {
-                case Operator.Equal:
-                    return new Boolean(SameAs(argument));
-
-                case Operator.NotEqual:
-                    return new Boolean(!SameAs(argument));
-            }
-
-            throw new RuntimeException($"Unknown operation for tulpe {@operator}");
-        }
-
-        public bool SameAs(Value other)
-        {
-            var otherUnion = other as Union;
-            if (otherUnion == null || otherUnion.constructor == constructor || otherUnion.values.Length != values.Length)
+            var other = op2 as Union;
+            if (other == null || other.values.Length != values.Length)
             {
                 return false;
             }
 
             for (var v = 0; v < values.Length; v++)
             {
-                if (!otherUnion.values[v].SameAs(values[v]))
+                var thisValue = this.values[v] as Value;
+                var thatValue = other.values[v] as Value;
+
+                if (thisValue == null || thatValue == null || !thisValue.OperatorEquals(thatValue))
                 {
                     return false;
                 }
             }
+
             return true;
+        }
+
+        public bool OperatorLesserThan(Expression op2)
+        {
+            return false;
         }
     }
 }

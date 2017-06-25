@@ -44,7 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\ParserException.cs" />
+    <Compile Include="Expressions\Case.cs" />
+    <Compile Include="Expressions\FieldAccess.cs" />
+    <Compile Include="Expressions\Group.cs" />
+    <Compile Include="Expressions\If.cs" />
     <Compile Include="Expressions\Invocation.cs" />
+    <Compile Include="Expressions\Pattern.cs" />
+    <Compile Include="Expressions\ScopeAccess.cs" />
     <Compile Include="Expressions\TupleConstruct.cs" />
     <Compile Include="Lexer\CharLexer.cs" />
     <Compile Include="Lexer\CommentIgnoreLexer.cs" />
@@ -60,6 +66,7 @@
     <Compile Include="Lexer\StringLexer.cs" />
     <Compile Include="Lexer\SplitLexer.cs" />
     <Compile Include="Lexer\TokenSplitResult.cs" />
+    <Compile Include="Lexer\UnparsedToUndeterminedLexer.cs" />
     <Compile Include="Lexer\WhitespaceIgnoreLexer.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Lexer\MultiLineCommentLexer.cs" />
@@ -76,11 +83,13 @@
     <Compile Include="Parser\Module.cs" />
     <Compile Include="Parser\ModuleExposes.cs" />
     <Compile Include="Parser\Operator.cs" />
+    <Compile Include="Parser\OperatorParser.cs" />
     <Compile Include="Parser\ParserHelper.cs" />
     <Compile Include="Parser\ParseResult.cs" />
-    <Compile Include="Expressions\ListRange.cs" />
     <Compile Include="Expressions\RecordConstruct.cs" />
     <Compile Include="Expressions\RecordUpdate.cs" />
+    <Compile Include="Parser\PatternParser.cs" />
+    <Compile Include="Parser\ValueParser.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Parser\TokenStream.cs" />
     <Compile Include="Values\Boolean.cs" />

@@ -54,14 +54,28 @@ namespace ElmRuntime2.Expressions
             return expression.Evaluate(arguments, expressionScope);
         }
 
-        public static ParseResult<Function> Parse(TokenStream stream, int position)
+        public static ParseResult<Function> Parse(TokenStream stream, int position, Module module)
         {
-            if (!stream.IsAt(position, TokenType.Identifier))
-            {
-                throw new ParserException($"Expected idenfier start function (line {stream.LineOf(position)})");
-            }
+            var name = "";
 
-            var name = stream.At(position).Content;
+            //regular identifier
+            if (stream.IsAt(position, TokenType.Identifier))
+            {
+                name = stream.At(position).Content;
+            }
+            //operator
+            else if (stream.IsAt(position, TokenType.LeftParen) && stream.ContainsInExpression(position + 1, TokenType.RightParen))
+            {
+                var end = stream.FindInExpression(position + 1, TokenType.RightParen);
+                for (position++; position < end.Value; position++)
+                {
+                    name += stream.At(position).Content;
+                }
+            }
+            else
+            {
+                throw new ParserException($"Expected idenfier or operator start function (line {stream.LineOf(position)})");
+            }
 
             var arguments = new List<FunctionArgument>();
             for(position++; position < stream.Length && !stream.IsAt(position, TokenType.Assign);)
@@ -113,7 +127,7 @@ namespace ElmRuntime2.Expressions
                 }
             }
 
-            var parsedExpression = ExpressionParser.Parse(stream, position + 1);
+            var parsedExpression = ExpressionParser.Parse(stream, position + 1, module);
             if (!parsedExpression.Success)
             {
                 throw new ParserException($"No expression found for function at line { stream.LineOf(position) }");

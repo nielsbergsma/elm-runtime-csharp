@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,43 +13,52 @@ namespace ElmRuntime2.Parser
         public static ParseResult<ModuleImport[]> Parse(TokenStream stream, int position)
         {
             var imports = new List<ModuleImport>();
-            if (!stream.IsAt(position + 1, TokenType.Identifier))
-            {
-                return new ParseResult<ModuleImport[]>(imports.ToArray(), position + 1);
-            }
 
-            var name = "";
-            for (var index = position + 1; index < stream.Length && stream.IsAnyAt(index, TokenType.Identifier, TokenType.Dot); index++)
-            {
-                name += stream.At(index).Content;
-            }
+            var name = stream.At(position + 1).Content;
+            position++;
 
+            //alias
             var alias = name;
-            var aliasStart = stream.FindInExpression(position + 1, TokenType.As);
-            if (aliasStart.HasValue)
+            var aliasStart = stream.FindInExpression(position - 1, TokenType.As);
+            if (aliasStart.HasValue && stream.IsAt(aliasStart.Value, TokenType.As, TokenType.Identifier))
             {
                 alias = stream.At(aliasStart.Value + 1).Content;
             }
 
-            if (stream.IsAt(position + 2, TokenType.Exposing))
+            //exposing
+            if (stream.IsAt(position, TokenType.Exposing))
             {
-                if (stream.IsAt(position + 3, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))
+                //everything
+                if (stream.IsAt(position + 1, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))
                 {
                     imports.Add(new ModuleUnresolvedImport(name, alias));
                 }
+                //list
                 else
                 {
-                    var types = ParserHelper.ParseArray(stream, position + 3);
+                    var types = ParserHelper.ParseArray(stream, position + 1);
                     foreach(var type in types.Value)
                     {
                         var typeIdentifier = type.At(0).Content;
                         var constructors = ParserHelper.ParseArray(type, 1);
 
-                        if (constructors.Value.Length == 0)
+                        //operator
+                        if (type.IsAt(0, TokenType.LeftParen) && type.IsAt(type.Length - 1, TokenType.RightParen))
+                        {
+                            typeIdentifier = "";
+                            for (var ti = 1; ti < type.Length - 1; ti++)
+                            {
+                                typeIdentifier += type.At(ti).Content;
+                            }
+                            imports.Add(new ModuleUnresolvedImport(name, alias, typeIdentifier));
+                        }
+                        //named expression / type
+                        else if (constructors.Value.Length == 0)
                         {
                             imports.Add(new ModuleUnresolvedImport(name, alias, typeIdentifier));
                         }
 
+                        //union constructors
                         foreach(var constructor in constructors.Value)
                         {
                             var constructorIdentifier = constructor.At(0).Content;

@@ -44,7 +44,7 @@ namespace ElmRuntime2.Expressions
                 throw new RuntimeException($"Expected record value to deconstruct, got {value.GetType()}");
             }
 
-            var field = default(Value);
+            var field = default(Expression);
             var record = value as Record;
 
             foreach(var name in names)
@@ -77,7 +77,7 @@ namespace ElmRuntime2.Expressions
                 throw new RuntimeException($"Expected tuple value to deconstruct, got {value.GetType()}");
             }
 
-            var field = default(Value);
+            var field = default(Expression);
             var tuple = value as Values.Tuple;
 
             for (var item = 0; item < names.Length; item++)

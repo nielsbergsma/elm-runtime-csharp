@@ -26,8 +26,18 @@ namespace ElmRuntime2.Parser
             {
                 var name = expose.At(0).Content;
 
+                //operator
+                if (expose.IsAt(0, TokenType.LeftParen) && expose.IsAt(expose.Length - 1, TokenType.RightParen))
+                {
+                    name = "";
+                    for (var e = 1; e < expose.Length - 1; e++)
+                    {
+                        name += expose.At(e).Content;
+                    }
+                    exposes.Add(new ModuleUnresolvedExpose(name));
+                }
                 //expose everything
-                if (expose.IsAt(1, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))
+                else if (expose.IsAt(1, TokenType.LeftParen, TokenType.Range, TokenType.RightParen))
                 {
                     exposes.Add(new ModuleUnresolvedExpose(name));
                 }

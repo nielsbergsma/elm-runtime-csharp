@@ -33,14 +33,14 @@ namespace ElmRuntime2.Expressions
             return record.Set(fieldValues.ToArray());
         }
 
-        public static ParseResult<RecordConstruct> Parse(TokenStream stream, int position)
+        public static ParseResult<RecordConstruct> Parse(TokenStream stream, int position, Module module)
         {
             var parsed = ParserHelper.ParseArray(stream, position);
 
             var fieldExpressions = new Dictionary<string, Expression>();
             foreach (var assignment in parsed.Value)
             {
-                var fieldExpression = ExpressionParser.Parse(assignment, 2);
+                var fieldExpression = ExpressionParser.Parse(assignment, 2, module);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

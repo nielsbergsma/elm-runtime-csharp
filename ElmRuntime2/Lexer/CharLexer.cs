@@ -56,7 +56,7 @@ namespace ElmRuntime2.Lexer
 
             if (end - start == 1)
             {
-                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start, 1)));
+                head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Undetermined, line.Substring(start, 1)));
             }
             else
             {

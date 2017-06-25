@@ -10,7 +10,7 @@ namespace ElmRuntime2.Lexer
     {
         /* errors */
         Unparsed = -1,
-        Unknown = 0,
+        Undetermined = 0,
 
         /* comment */
         Comment,
@@ -36,7 +36,8 @@ namespace ElmRuntime2.Lexer
         Identifier,
 
         /* operators */
-        Op,
+        OpInfix,
+        OpPrefix,
 
         /* literals */
         String,

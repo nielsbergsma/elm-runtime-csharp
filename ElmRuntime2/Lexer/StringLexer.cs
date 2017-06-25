@@ -70,7 +70,7 @@ namespace ElmRuntime2.Lexer
 
                 if (!ended)
                 {
-                    head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Unknown, line.Substring(start)));
+                    head.Push(new Token(token.Value.Line, token.Value.Column + start, TokenType.Undetermined, line.Substring(start)));
                 }
                 else
                 {

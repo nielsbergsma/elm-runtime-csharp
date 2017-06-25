@@ -41,7 +41,7 @@ namespace ElmRuntime2.Expressions
             return record.Set(fieldValues.ToArray());
         }
 
-        public static ParseResult<RecordUpdate> Parse(TokenStream stream, int position)
+        public static ParseResult<RecordUpdate> Parse(TokenStream stream, int position, Module module)
         {
             if (!stream.IsAt(position, TokenType.LeftBrace, TokenType.Identifier, TokenType.Pipe))
             {
@@ -57,7 +57,7 @@ namespace ElmRuntime2.Expressions
             {
                 var assignment = parsed.Value[0];
                 var fieldName = assignment.At(2).Content;
-                var fieldExpression = ExpressionParser.Parse(assignment, 4);
+                var fieldExpression = ExpressionParser.Parse(assignment, 4, module);
 
                 fieldExpressions[fieldName] = fieldExpression.Value;
             }
@@ -65,7 +65,7 @@ namespace ElmRuntime2.Expressions
             for (var fe = 1; fe < parsed.Value.Length; fe++)
             {
                 var assignment = parsed.Value[fe];
-                var fieldExpression = ExpressionParser.Parse(assignment, 2);
+                var fieldExpression = ExpressionParser.Parse(assignment, 2, module);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

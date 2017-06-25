@@ -11,67 +11,32 @@ namespace ElmRuntime2.Parser
 {
     public static class ExpressionParser
     {
-        public static ParseResult<Expression> Parse(TokenStream stream, int position)
+        public static ParseResult<Expression> Parse(TokenStream stream, int position, Module module)
         {
             if (position >= stream.Length)
             {
                 return new ParseResult<Expression>(false, default(Expression), position);
             }
 
+            //resolve operators
+            var start = position;
+            var end = stream.SkipToNextExpression(position);
+            stream = OperatorParser.Resolve(stream, position, module);
+            position = 0;
+
             //basic values
-            if (stream.IsAt(position, TokenType.Int))
+            if (stream.IsAnyAt(position, TokenType.True, TokenType.False, TokenType.Int, TokenType.Float, TokenType.String, TokenType.Char))
             {
-                var value = int.Parse(stream.At(position).Content);
-                return new ParseResult<Expression>(true, new Values.Integer(value), position + 1);
-            }
-            else if (stream.IsAt(position, TokenType.Float))
-            {
-                var value = float.Parse(stream.At(position).Content);
-                return new ParseResult<Expression>(true, new Values.Float(value), position + 1);
-            }
-            else if (stream.IsAt(position, TokenType.Char))
-            {
-                var value = stream.At(position).Content[0];
-                return new ParseResult<Expression>(true, new Values.Character(value), position + 1);
-            }
-            else if (stream.IsAt(position, TokenType.String))
-            {
-                var value = stream.At(position).Content;
-                return new ParseResult<Expression>(true, new Values.String(value), position + 1);
-            }
-            else if (stream.IsAt(position, TokenType.True))
-            {
-                return new ParseResult<Expression>(true, new Values.Boolean(true), position + 1);
-            }
-            else if (stream.IsAt(position, TokenType.False))
-            {
-                return new ParseResult<Expression>(true, new Values.Boolean(false), position + 1);
+                var parsed = ValueParser.ParseValue(stream, position);
+                return new ParseResult<Expression>(parsed.Value, start + parsed.Position);
             }
             //list 
             else if (stream.IsAt(position, TokenType.LeftBracket))
             {
-                var parsed = ParserHelper.ParseArray(stream, position);
-                var isRange = parsed.Value.Length == 1 && parsed.Value[0].ContainsInExpression(0, TokenType.Range);
-
-                if (isRange)
+                var parsedList = ListConstruct.Parse(stream, position, module);
+                if (!parsedList.Success)
                 {
-                    var parsedRange = ListRange.Parse(stream, position);
-                    if (!parsedRange.Success)
-                    {
-                        throw new ParserException($"Unable to parse range near line {stream.LineOf(position)}");
-                    }
-
-                    return new ParseResult<Expression>(true, parsedRange.Value, parsed.Position);
-                }
-                else
-                {
-                    var parsedList = ListConstruct.Parse(stream, position);
-                    if (!parsedList.Success)
-                    {
-                        throw new ParserException($"Unable to parse list near line {stream.LineOf(position)}");
-                    }
-
-                    return new ParseResult<Expression>(true, parsedList.Value, parsed.Position);
+                    throw new ParserException($"Unable to parse list near line {stream.LineOf(position)}");
                 }
             }
             //record
@@ -82,26 +47,26 @@ namespace ElmRuntime2.Parser
 
                 if (isUpdate)
                 {
-                    var recordUpdate = RecordUpdate.Parse(stream, position);
+                    var recordUpdate = RecordUpdate.Parse(stream, position, module);
                     if (!recordUpdate.Success)
                     {
                         throw new ParserException($"Unable to parse record near line {stream.LineOf(position)}");
                     }
 
-                    return new ParseResult<Expression>(true, recordUpdate.Value, parsed.Position);
+                    return new ParseResult<Expression>(true, recordUpdate.Value, start + parsed.Position);
                 }
                 else
                 {
-                    var recordConstruct = RecordConstruct.Parse(stream, position);
+                    var recordConstruct = RecordConstruct.Parse(stream, position, module);
                     if (!recordConstruct.Success)
                     {
                         throw new ParserException($"Unable to parse record near line {stream.LineOf(position)}");
                     }
 
-                    return new ParseResult<Expression>(true, recordConstruct.Value, parsed.Position);
+                    return new ParseResult<Expression>(true, recordConstruct.Value, start + parsed.Position);
                 }
             }
-            //tuple, parentheses, infix operator 
+            //tuple, parentheses
             else if (stream.IsAt(position, TokenType.LeftParen))
             {
                 var parsed = ParserHelper.ParseArray(stream, position);
@@ -109,44 +74,110 @@ namespace ElmRuntime2.Parser
                 //tuple
                 if (stream.IsAt(position, TokenType.LeftParen, TokenType.Comma) || parsed.Value.Length > 1)
                 {
-                    var tupleConstruct = TupleConstruct.Parse(stream, position);
+                    var tupleConstruct = TupleConstruct.Parse(stream, position, module);
                     if (!tupleConstruct.Success)
                     {
                         throw new ParserException($"Unable to parse tuple near line {stream.LineOf(position)}");
                     }
-                    return new ParseResult<Expression>(true, tupleConstruct.Value, parsed.Position);
+                    return new ParseResult<Expression>(true, tupleConstruct.Value, start + parsed.Position);
                 }
-                //parentheses, infix operator
+                //parentheses
                 else if (parsed.Value.Length == 1)
                 {
-
+                    var groupParsed = Parse(parsed.Value[0], 0, module);
+                    var group = new Group(groupParsed.Value);
+                    return new ParseResult<Expression>(true, group, start + parsed.Position);
                 }
+            }
+            //member access as lambda
+            else if (stream.IsAt(position, TokenType.Dot, TokenType.Identifier))
+            {
+                var field = stream.At(position + 1).Content;
+                var fieldAccess = new FieldAccess(field);
+                return new ParseResult<Expression>(true, fieldAccess, start + 2);
+            }
+            //case pattern
+            else if (stream.IsAt(position, TokenType.Case))
+            {
+                if (!stream.IsAt(position + 1, TokenType.Identifier))
+                {
+                    throw new ParserException($"Unexpected token while parsing case expression");
+                }
+
+                var subject = new ScopeAccess(stream.At(position + 1).Content);
+
+                if (!stream.IsAt(position + 2, TokenType.Of))
+                {
+                    throw new ParserException($"Unexpected token while parsing case expression");
+                }
+
+                position += 3;
+                var column = stream.At(position).Column;
+                var patterns = new List<CasePattern>();
+
+                while (position < stream.Length && column <= stream.At(position).Column)
+                {
+                    var conditionParsed = PatternParser.ParsePattern(stream, position);
+                    position = conditionParsed.Position;
+
+                    if (!stream.IsAt(position, TokenType.Arrow))
+                    {
+                        throw new ParserException($"Unexpected token while parsing case expression");
+                    }
+
+                    var expressionParsed = Parse(stream, position + 1, module);
+                    position = expressionParsed.Position;
+
+                    patterns.Add(new CasePattern(conditionParsed.Value, expressionParsed.Value));
+                }
+
+                var @case = new Case(subject, patterns.ToArray());
+                return new ParseResult<Expression>(@case, start + position);
+            }
+            else if (stream.IsAt(position, TokenType.If))
+            {
+                var condition = Parse(stream, position + 1, module);
+                if (!stream.IsAt(condition.Position, TokenType.Then))
+                {
+                    throw new ParserException($"Unable to parse if expression, cannot find then");
+                }
+
+                var then = Parse(stream, condition.Position + 1, module);
+                if (!stream.IsAt(then.Position, TokenType.Else))
+                {
+                    throw new ParserException($"Unable to parse if expression, cannot find else");
+                }
+
+                var @else = Parse(stream, then.Position + 1, module);
+                if (!@else.Success)
+                {
+                    throw new ParserException($"Unexpected end of if expression");
+                }
+
+                var @if = new If(condition.Value, then.Value, @else.Value);
+                return new ParseResult<Expression>(@if, start + @else.Position);
             }
             else if (stream.IsAt(position, TokenType.Identifier))
             {
                 var name = stream.At(position).Content;
-                if (stream.IsAt(position + 1, TokenType.Dot, TokenType.Identifier))
-                {
-                    name += "." + stream.At(position + 2).Content;
-                    position += 2;
-                }
 
-                var argumentsStart = position + 1;
-                var argumentsEnd = stream.SkipToNextExpression(position);
-                var arguments = new List<Expression>();
+                ////local variable?
+                //var argumentsStart = position + 1;
+                //var argumentsEnd = stream.SkipToNextExpression(position);
+                //var arguments = new List<Expression>();
 
-                for (var argumentPosition = argumentsStart; argumentPosition < argumentsEnd;)
-                {
-                    var argument = Parse(stream, argumentPosition);
-                    if (argument.Success)
-                    {
-                        arguments.Add(argument.Value);
-                    }
-                    argumentPosition = argument.Position;
-                }
+                //for (var argumentPosition = argumentsStart; argumentPosition < argumentsEnd;)
+                //{
+                //    var argument = Parse(stream, argumentPosition, module);
+                //    if (argument.Success)
+                //    {
+                //        arguments.Add(argument.Value);
+                //    }
+                //    argumentPosition = argument.Position;
+                //}
 
-                var invocation = new Invocation(name, arguments.ToArray());
-                return new ParseResult<Expression>(true, invocation, argumentsEnd);
+                var invocation = new Invocation(name, new Expression[0]);
+                return new ParseResult<Expression>(true, invocation, start + position + 1);
             }
 
             return new ParseResult<Expression>(false, default(Expression), 0);

@@ -12,15 +12,15 @@ namespace ElmRuntime2.Values
 {
     public class Record : Value
     {
-        private readonly Dictionary<string, Value> fields;
+        private readonly Dictionary<string, Expression> fields;
 
         public Record()
-            : this (new Dictionary<string, Value>())
+            : this (new Dictionary<string, Expression>())
         {
 
         }
 
-        private Record(Dictionary<string, Value> fields)
+        private Record(Dictionary<string, Expression> fields)
         {
             this.fields = fields;
         }
@@ -30,9 +30,14 @@ namespace ElmRuntime2.Values
             return this;
         }
 
+        public Record Set(string name, Value value)
+        {
+            return Set(new[] { new RecordFieldValue(name, value) });
+        }
+
         public Record Set(RecordFieldValue[] values)
         {
-            var fields = new Dictionary<string, Value>(this.fields);
+            var fields = new Dictionary<string, Expression>(this.fields);
             foreach (var value in values)
             {
                 fields[value.Name] = value.Value;
@@ -40,48 +45,39 @@ namespace ElmRuntime2.Values
             return new Record(fields);
         }
 
-        public bool TryGet(string name, out Value value)
+        public bool TryGet(string name, out Expression value)
         {
             return fields.TryGetValue(name, out value);
         }
 
-        public Value Op(Operator @operator)
+        public bool OperatorEquals(Expression op2)
         {
-            throw new RuntimeException($"Unknown operation for tuple {@operator}");
-        }
-
-        public Value Op(Operator @operator, Value argument)
-        {
-            switch (@operator)
-            {
-                case Operator.Equal:
-                    return new Boolean(SameAs(argument));
-
-                case Operator.NotEqual:
-                    return new Boolean(!SameAs(argument));
-            }
-
-            throw new RuntimeException($"Unknown operation for tulpe {@operator}");
-        }
-
-        public bool SameAs(Value other)
-        {
-            var otherRecord = other as Record;
-            if (otherRecord == null || otherRecord.fields.Count != fields.Count)
+            var other = op2 as Record;
+            if (other == null || other.fields.Count != fields.Count)
             {
                 return false;
             }
 
-            foreach (var otherField in otherRecord.fields)
+            foreach (var otherField in other.fields)
             {
-                var thisFieldValue = default(Value);
-                if (!fields.TryGetValue(otherField.Key, out thisFieldValue) || !otherField.Value.SameAs(thisFieldValue))
+                if (!(otherField.Value is Value))
+                {
+                    return false;
+                }
+
+                var thisFieldValue = default(Expression);
+                if (!fields.TryGetValue(otherField.Key, out thisFieldValue) || !(otherField .Value as Value).OperatorEquals(thisFieldValue))
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+
+        public bool OperatorLesserThan(Expression op2)
+        {
+            return false;
         }
     }
 }

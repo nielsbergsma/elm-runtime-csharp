@@ -11,7 +11,7 @@ namespace ElmRuntime2.Parser
 {
     public static class LineParser
     {
-        public static ParseResult<Expression> Parse(TokenStream stream, int position)
+        public static ParseResult<Expression> Parse(TokenStream stream, int position, Module module)
         {
             if (position >= stream.Length)
             {
@@ -42,25 +42,27 @@ namespace ElmRuntime2.Parser
                 return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
             //annotation (ignore)
-            else if (stream.ContainsInExpression(position, TokenType.Colon))
+            else if (stream.ContainsInExpression(position, TokenType.Colon) && !stream.ContainsInExpression(position, TokenType.Assign))
             {
                 var nextExpressionStart = stream.SkipToNextExpression(position);
                 return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
-            //operator
+            //operator (ignore - already parsed)
             else if (stream.IsAt(position, TokenType.LeftParen) && stream.ContainsInExpression(position + 1, TokenType.RightParen))
             {
-                throw new NotImplementedException();
+                var nextExpressionStart = stream.SkipToNextExpression(position);
+                return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
-            //set association + precedence of operator
+            //set association + precedence of operator (ignore - already done)
             else if (stream.IsAnyAt(position, TokenType.Infix, TokenType.Infixl, TokenType.Infixr))
             {
-                throw new NotImplementedException();
+                var nextExpressionStart = stream.SkipToNextExpression(position);
+                return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
             //function expression (named expression)
             else if (ParserHelper.IsVariableName(stream, position) && stream.ContainsInExpression(position, TokenType.Assign))
             {
-                var parsed = Function.Parse(stream, position);
+                var parsed = Function.Parse(stream, position, module);
                 var nextExpressionStart = stream.SkipToNextExpression(position);
 
                 if (parsed.Success)

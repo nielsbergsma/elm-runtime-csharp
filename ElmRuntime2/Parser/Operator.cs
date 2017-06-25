@@ -1,4 +1,8 @@
-﻿using System;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
+using ElmRuntime2.Lexer;
+using ElmRuntime2.Values;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,84 +10,92 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Parser
 {
-    public enum Operator
+    public enum OperatorAssociativity
     {
-        Unknown = 0,
-
-        /* << */ ShiftLeft,
-        /* >> */ ShiftRight,
-        /* // */ DevideToInt,
-        /* ++ */ Concat,
-        /* :: */ Prepend,
-        /* == */ Equal,
-        /* /= */ NotEqual,
-        /* <= */ LesserOrEqual,
-        /* >= */ GreaterOrEqual,
-        /* && */ And,
-        /* || */ Or,
-        /* |> */ TransformLeft,
-        /* <| */ TransformRight,
-        /* <  */ Lesser,
-        /* >  */ Greater,
-        /* /  */ Devide,
-        /* *  */ Multiply,
-        /* ^  */ Power,
-        /* +  */ Plus,
-        /* -  */ Minus,
-        /* %  */ Modulo,
+        Left,
+        NoAssociativity,
+        Right
     }
 
-    public static class OperatorParser
+    public class Operator : Expression, IComparable<Operator>
     {
-        public static Operator Parse(string value)
+        private readonly string symbol;
+        private int precedence;
+        private OperatorAssociativity associativity;
+        private Function evaluator;
+
+        public Operator(string symbol)
+            : this(symbol, 9, OperatorAssociativity.Left)
         {
-            switch (value)
-            {
-                case "<<":
-                    return Operator.ShiftLeft;
-                case ">>":
-                    return Operator.ShiftRight;
-                case "//":
-                    return Operator.DevideToInt;
-                case "++":
-                    return Operator.Concat;
-                case "::":
-                    return Operator.Prepend;
-                case "==":
-                    return Operator.Equal;
-                case "/=":
-                    return Operator.NotEqual;
-                case "<=":
-                    return Operator.LesserOrEqual;
-                case ">=":
-                    return Operator.GreaterOrEqual;
-                case "&&":
-                    return Operator.And;
-                case "||":
-                    return Operator.Or;
-                case "|>":
-                    return Operator.TransformLeft;
-                case "<|":
-                    return Operator.TransformRight;
-                case "<":
-                    return Operator.Lesser;
-                case ">":
-                    return Operator.Greater;
-                case "/":
-                    return Operator.Devide;
-                case "*":
-                    return Operator.Multiply;
-                case "^":
-                    return Operator.Power;
-                case "+":
-                    return Operator.Plus;
-                case "-":
-                    return Operator.Minus;
-                case "%":
-                    return Operator.Modulo;
-                default:
-                    return Operator.Unknown;
-            }
         }
+
+        public Operator(string symbol, int precedence, OperatorAssociativity associativity)
+        {
+            this.symbol = symbol;
+            this.precedence = precedence;
+            this.associativity = associativity;
+        }
+
+        public string Symbol
+        {
+            get { return symbol; }
+        }
+
+        public void SetPrecedenceAndAssociativity(int precedence, OperatorAssociativity associativity)
+        {
+            this.precedence = precedence;
+            this.associativity = associativity;
+        }
+
+        public void SetEvaluator(Function evaluator)
+        {
+            this.evaluator = evaluator;
+        }
+
+        public Expression Evaluate(Expression[] arguments, Scope scope)
+        {
+            return evaluator.Evaluate(arguments, scope);
+        }
+
+        public int Precedence
+        {
+            get { return precedence; }
+        }
+
+        public int CompareTo(Operator other)
+        {
+            return Precedence - other.Precedence;
+        }
+    }
+
+    public static class Core
+    {
+        public static Dictionary<string, Operator> Operators = new Dictionary<string, Operator>
+        {
+            { ">>", new Operator(">>", 9, OperatorAssociativity.Left) },
+            { "<<", new Operator("<<", 9, OperatorAssociativity.Right) },
+            { "^", new Operator("^", 8, OperatorAssociativity.Right) },
+            { "*", new Operator("*", 7, OperatorAssociativity.Left) },
+            { "%", new Operator("%", 7, OperatorAssociativity.Left) },
+            { "/", new Operator("/", 7, OperatorAssociativity.Left) },
+            { "//", new Operator("//", 7, OperatorAssociativity.Left) },
+            { "+", new Operator("+", 6, OperatorAssociativity.Left) },
+            { "-", new Operator("-", 6, OperatorAssociativity.Left) },
+            { "++", new Operator("++", 5, OperatorAssociativity.Right) },
+            { "::", new Operator("::", 5, OperatorAssociativity.Right) },
+
+            { "==", new Operator("==", 4, OperatorAssociativity.NoAssociativity) },
+            { "/=", new Operator("/=", 4, OperatorAssociativity.NoAssociativity) },
+            { "<", new Operator("<", 4, OperatorAssociativity.NoAssociativity) },
+            { ">", new Operator(">", 4, OperatorAssociativity.NoAssociativity) },
+            { "<=", new Operator("<=", 4, OperatorAssociativity.NoAssociativity) },
+            { ">=", new Operator(">=", 4, OperatorAssociativity.NoAssociativity) },
+
+            { "&&", new Operator("&&", 3, OperatorAssociativity.Right) },
+            { "||", new Operator("||", 2, OperatorAssociativity.Right) },
+
+            { "<|", new Operator("<|", 0, OperatorAssociativity.Right) },
+            { "|>", new Operator("|>", 0, OperatorAssociativity.Left) },
+        };
     }
 }

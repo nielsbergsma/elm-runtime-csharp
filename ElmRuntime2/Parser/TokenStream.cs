@@ -68,7 +68,12 @@ namespace ElmRuntime2.Parser
 
             return true;
         }
-        
+
+        public bool IsAt(int position, string content)
+        {
+            return position < tokens.Length && tokens[position].Content == content;
+        }
+
         public bool IsAnyAt(int position, params TokenType[] types)
         {
             if (position >= tokens.Length)

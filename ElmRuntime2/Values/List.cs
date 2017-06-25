@@ -12,14 +12,14 @@ namespace ElmRuntime2.Values
 {
     public class List : Value
     {
-        private readonly Value[] values;
+        private readonly Expression[] values;
 
-        public List(Value[] values)
+        public List(Expression[] values)
         {
             this.values = values;
         }
 
-        public Value[] Values
+        public Expression[] Values
         {
             get { return values; }
         }
@@ -34,7 +34,7 @@ namespace ElmRuntime2.Values
             return values.Length == 0;
         }
 
-        public Value Head()
+        public Expression Head()
         {
             return values.Length > 0 ? values[0] : null;
         }
@@ -69,51 +69,56 @@ namespace ElmRuntime2.Values
             return new List(newValues);
         }
 
-        public Value Op(Operator @operator)
+        public bool OperatorEquals(Expression op2)
         {
-            throw new RuntimeException($"Unknown operation for list {@operator}");
-        }
-
-        public Value Op(Operator @operator, Value argument)
-        {
-            switch (@operator)
-            {
-                case Operator.Prepend:
-                    return Prepend(argument);
-
-                case Operator.Concat:
-                    if (!(argument is List))
-                    {
-                        throw new RuntimeException("Concat requires a list");
-                    }
-                    return Concat(argument as List);
-
-                case Operator.Equal:
-                    return new Boolean(SameAs(argument));
-
-                case Operator.NotEqual:
-                    return new Boolean(!SameAs(argument));
-            }
-
-            throw new RuntimeException($"Unknown operation for list {@operator}");
-        }
-
-        public bool SameAs(Value other)
-        {
-            var otherList = other as List;
-            if (otherList == null || otherList.values.Length != values.Length)
+            var other = op2 as List;
+            if (other == null || other.values.Length != values.Length)
             {
                 return false;
             }
 
             for (var v = 0; v < values.Length; v++)
             {
-                if (!otherList.values[v].SameAs(values[v]))
+                var thisValue = this.values[v] as Value;
+                var thatValue = other.values[v] as Value;
+
+                if (thisValue == null || thatValue == null || !thisValue.OperatorEquals(thatValue))
                 {
                     return false;
                 }
             }
+
             return true;
+        }
+
+        public bool OperatorLesserThan(Expression op2)
+        {
+            var other = op2 as List;
+            if (other == null || other.values.Length != values.Length)
+            {
+                return false;
+            }
+
+            for (var v = 0; v < values.Length; v++)
+            {
+                var thisValue = this.values[v] as Value;
+                var thatValue = other.values[v] as Value;
+
+                if (thisValue == null || thatValue == null)
+                {
+                    return false;
+                }
+                else if (thisValue.OperatorEquals(thatValue))
+                {
+                    continue;
+                }
+                else if (thisValue.OperatorLesserThan(thatValue))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

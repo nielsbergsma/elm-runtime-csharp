@@ -33,23 +33,11 @@ namespace ElmRuntime2.Lexer
             lexer = new SymbolLexer(lexer);
 
             //clean up
+            lexer = new UnparsedToUndeterminedLexer(lexer);
             lexer = new WhitespaceIgnoreLexer(lexer);
             lexer = new CommentIgnoreLexer(lexer);
 
             return lexer;
-        }
-
-        public static bool Validate(string input)
-        {
-            var tokens = Lex(input);
-            for(var token = tokens.Next(); token.HasValue; token = tokens.Next())
-            {
-                if (token.Value.Is(TokenType.Unparsed) || token.Value.Is(TokenType.Unknown))
-                {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }

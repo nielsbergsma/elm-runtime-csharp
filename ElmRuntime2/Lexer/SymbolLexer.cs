@@ -12,19 +12,6 @@ namespace ElmRuntime2.Lexer
         private readonly Dictionary<string, TokenType>[] symbolGroups = new[] {
             new Dictionary<string, TokenType>
             {
-                { ">>", TokenType.Op },
-                { "<<", TokenType.Op },
-                { "//", TokenType.Op },
-                { "++", TokenType.Op },
-                { "::", TokenType.Op },
-                { "==", TokenType.Op },
-                { "/=", TokenType.Op },
-                { "<=", TokenType.Op },
-                { ">=", TokenType.Op },
-                { "&&", TokenType.Op },
-                { "||", TokenType.Op },
-                { "<|", TokenType.Op },
-                { "|>", TokenType.Op },
                 { "->", TokenType.Arrow },
                 { "..", TokenType.Range }
             },
@@ -32,17 +19,9 @@ namespace ElmRuntime2.Lexer
             new Dictionary<string, TokenType>
             {
                 { "_", TokenType.Underscore },
-                { "<", TokenType.Op },
-                { ">", TokenType.Op },
-                { "/", TokenType.Op },
-                { "^", TokenType.Op },
-                { "*", TokenType.Op },
-                { "+", TokenType.Op },
-                { "-", TokenType.Op },
-                { "%", TokenType.Op },
-                { ".", TokenType.Dot },
                 { "\\", TokenType.Backslash },
                 { "|", TokenType.Pipe },
+                { ".", TokenType.Dot },
                 { ",", TokenType.Comma },
                 { ":", TokenType.Colon },
                 { "=", TokenType.Assign },
