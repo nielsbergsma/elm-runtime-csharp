@@ -47,4 +47,21 @@ namespace ElmRuntime2.Expressions
             return expression.Evaluate(arguments, lambdaScope);
         }
     }
+
+    public class LambdaConstruct : Expression
+    {
+        private readonly Pattern[] arguments;
+        private readonly Expression expression;
+
+        public LambdaConstruct(Pattern[] arguments, Expression expression)
+        {
+            this.arguments = arguments;
+            this.expression = expression;
+        }
+
+        public Expression Evaluate(Expression[] arguments, Scope scope)
+        {
+            return new Lambda(scope.Unwrap(), this.arguments, this.expression);            
+        }
+    }
 }

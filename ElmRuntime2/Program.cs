@@ -52,11 +52,13 @@ namespace ElmRuntime2
             //    .Set("bar", new Values.String("you're welcome"))
             //    .Set("qux", new Values.Boolean(false));
 
-            var union = new UnionConstructor("Some", new Integer(1), new Integer(-99));
+            //var union = new UnionConstructor("Some", new Integer(1), new Integer(-99));
 
-            var tuple = new Values.Tuple(union, new Values.String("yes"));
+            //var tuple = new Values.Tuple(union, new Values.String("yes"));
 
-            var result = module.Evaluate("main", new Value[] { tuple }, scope);
+            var argument = new Integer(3);
+
+            var result = module.Evaluate("main", new Value[] { argument }, scope);
 
             stopwatch.Stop();
             Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms");

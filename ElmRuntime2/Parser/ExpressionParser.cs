@@ -96,6 +96,36 @@ namespace ElmRuntime2.Parser
                 var fieldAccess = new FieldAccess(field);
                 return new ParseResult<Expression>(true, fieldAccess, start + 2);
             }
+            //lambda
+            else if (stream.IsAt(position, TokenType.Backslash))
+            {
+                var arguments = new List<Pattern>();
+                for (position++; position < stream.Length && !stream.IsAt(position, TokenType.Arrow);)
+                {
+                    var argumentParsed = PatternParser.ParsePattern(stream, position);
+                    if (!argumentParsed.Success)
+                    {
+                        break;
+                    }
+                    arguments.Add(argumentParsed.Value);
+                    position = argumentParsed.Position;
+                }
+
+                if (!stream.IsAt(position, TokenType.Arrow))
+                {
+                    throw new ParserException($"Unexpected token while parsing lambda expression");
+                }
+                position++;
+
+                var expressionParsed = ParseExpression(stream, position, module);
+                if (!expressionParsed.Success)
+                {
+                    throw new ParserException($"No expression for lambda expression");
+                }
+
+                var lambda = new LambdaConstruct(arguments.ToArray(), expressionParsed.Value);
+                return new ParseResult<Expression>(true, lambda, start + expressionParsed.Position);
+            }
             //case pattern
             else if (stream.IsAt(position, TokenType.Case))
             {
