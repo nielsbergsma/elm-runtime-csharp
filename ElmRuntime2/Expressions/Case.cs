@@ -57,11 +57,11 @@ namespace ElmRuntime2.Expressions
             if (matches is Values.Boolean && (matches as Values.Boolean).Value)
             {
                 var result = expression.Evaluate(arguments, casePatternScope);
-                return Tuple.Create(true, result);
+                return System.Tuple.Create(true, result);
             }
             else
             {
-                return Tuple.Create(false, default(Expression));
+                return System.Tuple.Create(false, default(Expression));
             }
         }
     }

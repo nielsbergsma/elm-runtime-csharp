@@ -1,41 +1,17 @@
-﻿using System;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
+using ElmRuntime2.Lexer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ElmRuntime2.Values;
-using ElmRuntime2.Exceptions;
-using ElmRuntime2.Parser;
-using ElmRuntime2.Lexer;
 
-namespace ElmRuntime2.Expressions
+namespace ElmRuntime2.Parser
 {
-    public class TupleConstruct : Expression
+    public static class TupleParser
     {
-        private readonly Expression[] expressions;
-
-        public TupleConstruct(Expression[] expressions)
-        {
-            this.expressions = expressions;
-        }
-
-        public Expression Evaluate(Expression[] arguments, Scope scope)
-        {
-            var values = new List<Value>();
-            foreach(var expression in expressions)
-            {
-                var result = expression.Evaluate(arguments, scope);
-                if (!(result is Value))
-                {
-                    throw new RuntimeException("Tuple expression must be evaluated to a value");
-                }
-                values.Add(result as Value);
-            }
-
-            return new Values.Tuple(values.ToArray());
-        }
-
-        public static ParseResult<TupleConstruct> Parse(TokenStream stream, int position, Module module)
+        public static ParseResult<TupleConstruct> ParseTuple(TokenStream stream, int position, Module module)
         {
             if (stream.IsAt(position, TokenType.LeftParen, TokenType.Comma))
             {
@@ -53,7 +29,7 @@ namespace ElmRuntime2.Expressions
                 var expressions = new List<Expression>();
                 for (var e = 0; e < numberOfElements; e++)
                 {
-                    var expression = ExpressionParser.Parse(stream, position, module);
+                    var expression = ExpressionParser.ParseExpression(stream, position, module);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);
@@ -75,7 +51,7 @@ namespace ElmRuntime2.Expressions
                 var expressions = new List<Expression>();
                 foreach (var element in array.Value)
                 {
-                    var expression = ExpressionParser.Parse(element, 0, module);
+                    var expression = ExpressionParser.ParseExpression(element, 0, module);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);

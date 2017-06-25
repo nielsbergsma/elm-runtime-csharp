@@ -90,9 +90,14 @@ namespace ElmRuntime2.Parser
             position++;
 
             var values = new List<Pattern>();
-            while (!stream.IsAt(position, TokenType.Arrow))
+            while (position < stream.Length && !stream.IsAt(position, TokenType.Arrow))
             {
                 var parsed = ParsePattern(stream, position);
+                if (!parsed.Success)
+                {
+                    break;
+                }
+
                 values.Add(parsed.Value);
                 position = parsed.Position;
             }
@@ -130,7 +135,7 @@ namespace ElmRuntime2.Parser
             var elements = ParserHelper.ParseArray(stream, position);
             if (elements.Value.Length == 1)
             {
-                return ParsePattern(elements.Value[0], elements.Position);
+                return ParsePattern(elements.Value[0], 0);
             }
 
             var items = new List<Pattern>();

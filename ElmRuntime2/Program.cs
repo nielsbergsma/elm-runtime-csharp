@@ -58,7 +58,12 @@ namespace ElmRuntime2
                 new Values.Integer(-99)
             });
 
-            var result = module.Evaluate("main", new Value[] { union }, scope);
+            var tuple = new Values.Tuple(new Value[] {
+                union,
+                new Values.String("yes"),
+            });
+
+            var result = module.Evaluate("main", new Value[] { tuple }, scope);
 
             stopwatch.Stop();
             Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms");

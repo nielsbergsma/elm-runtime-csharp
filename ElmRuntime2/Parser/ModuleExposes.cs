@@ -9,7 +9,7 @@ namespace ElmRuntime2.Parser
 {
     public static class ModuleExposes
     {
-        public static ParseResult<ModuleExpose[]> Parse(TokenStream stream, int position)
+        public static ParseResult<ModuleExpose[]> ParseModule(TokenStream stream, int position)
         {
             var exposes = new List<ModuleExpose>();
           

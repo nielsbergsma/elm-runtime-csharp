@@ -53,7 +53,7 @@ namespace ElmRuntime2.Parser
                 //expression
                 else
                 {
-                    var parsed = LineParser.Parse(stream, position, module);
+                    var parsed = LineParser.ParseLine(stream, position, module);
                     if (parsed.Success)
                     {
                         if (parsed.Value is Function)
@@ -101,7 +101,7 @@ namespace ElmRuntime2.Parser
 
             if (stream.IsAt(position + 2, TokenType.Exposing))
             {
-                var parsed = ModuleExposes.Parse(stream, position + 2);
+                var parsed = ModuleExposes.ParseModule(stream, position + 2);
                 exposing.AddRange(parsed.Value);
                 position = parsed.Position;
             }
@@ -111,7 +111,7 @@ namespace ElmRuntime2.Parser
 
         private int ParseImport(TokenStream stream, int position)
         {
-            var parsed = ModuleImports.Parse(stream, position);
+            var parsed = ModuleImports.ParseImport(stream, position);
             imports.AddRange(parsed.Value);
             return parsed.Position;
         }

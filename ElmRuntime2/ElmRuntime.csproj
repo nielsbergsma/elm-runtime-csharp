@@ -50,7 +50,7 @@
     <Compile Include="Expressions\If.cs" />
     <Compile Include="Expressions\Invocation.cs" />
     <Compile Include="Expressions\Pattern.cs" />
-    <Compile Include="Expressions\TupleConstruct.cs" />
+    <Compile Include="Expressions\Tuple.cs" />
     <Compile Include="Lexer\CharLexer.cs" />
     <Compile Include="Lexer\CommentIgnoreLexer.cs" />
     <Compile Include="Lexer\IdentifierLexer.cs" />
@@ -74,9 +74,11 @@
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Function.cs" />
     <Compile Include="Expressions\Lambda.cs" />
-    <Compile Include="Expressions\ListConstruct.cs" />
+    <Compile Include="Expressions\List.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
+    <Compile Include="Parser\FunctionParser.cs" />
     <Compile Include="Parser\LineParser.cs" />
+    <Compile Include="Parser\ListParser.cs" />
     <Compile Include="Parser\ModuleImports.cs" />
     <Compile Include="Parser\Module.cs" />
     <Compile Include="Parser\ModuleExposes.cs" />
@@ -87,6 +89,8 @@
     <Compile Include="Expressions\RecordConstruct.cs" />
     <Compile Include="Expressions\RecordUpdate.cs" />
     <Compile Include="Parser\PatternParser.cs" />
+    <Compile Include="Parser\RecordParser.cs" />
+    <Compile Include="Parser\TupleParser.cs" />
     <Compile Include="Parser\ValueParser.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Parser\TokenStream.cs" />

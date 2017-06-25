@@ -11,7 +11,7 @@ namespace ElmRuntime2.Parser
 {
     public static class LineParser
     {
-        public static ParseResult<Expression> Parse(TokenStream stream, int position, Module module)
+        public static ParseResult<Expression> ParseLine(TokenStream stream, int position, Module module)
         {
             if (position >= stream.Length)
             {
@@ -62,7 +62,7 @@ namespace ElmRuntime2.Parser
             //function expression (named expression)
             else if (ParserHelper.IsVariableName(stream, position) && stream.ContainsInExpression(position, TokenType.Assign))
             {
-                var parsed = Function.Parse(stream, position, module);
+                var parsed = FunctionParser.ParseFunction(stream, position, module);
                 var nextExpressionStart = stream.SkipToNextExpression(position);
 
                 if (parsed.Success)

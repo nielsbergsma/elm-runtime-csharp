@@ -11,7 +11,7 @@ namespace ElmRuntime2.Parser
 {
     public static class ExpressionParser
     {
-        public static ParseResult<Expression> Parse(TokenStream stream, int position, Module module)
+        public static ParseResult<Expression> ParseExpression(TokenStream stream, int position, Module module)
         {
             if (position >= stream.Length)
             {
@@ -33,7 +33,7 @@ namespace ElmRuntime2.Parser
             //list 
             else if (stream.IsAt(position, TokenType.LeftBracket))
             {
-                var parsedList = ListConstruct.Parse(stream, position, module);
+                var parsedList = ListParser.ParseList(stream, position, module);
                 if (!parsedList.Success)
                 {
                     throw new ParserException($"Unable to parse list near line {stream.LineOf(position)}");
@@ -47,7 +47,7 @@ namespace ElmRuntime2.Parser
 
                 if (isUpdate)
                 {
-                    var recordUpdate = RecordUpdate.Parse(stream, position, module);
+                    var recordUpdate = RecordParser.ParseRecordUpdate(stream, position, module);
                     if (!recordUpdate.Success)
                     {
                         throw new ParserException($"Unable to parse record near line {stream.LineOf(position)}");
@@ -57,7 +57,7 @@ namespace ElmRuntime2.Parser
                 }
                 else
                 {
-                    var recordConstruct = RecordConstruct.Parse(stream, position, module);
+                    var recordConstruct = RecordParser.ParseRecordConstruct(stream, position, module);
                     if (!recordConstruct.Success)
                     {
                         throw new ParserException($"Unable to parse record near line {stream.LineOf(position)}");
@@ -74,7 +74,7 @@ namespace ElmRuntime2.Parser
                 //tuple
                 if (stream.IsAt(position, TokenType.LeftParen, TokenType.Comma) || parsed.Value.Length > 1)
                 {
-                    var tupleConstruct = TupleConstruct.Parse(stream, position, module);
+                    var tupleConstruct = TupleParser.ParseTuple(stream, position, module);
                     if (!tupleConstruct.Success)
                     {
                         throw new ParserException($"Unable to parse tuple near line {stream.LineOf(position)}");
@@ -84,7 +84,7 @@ namespace ElmRuntime2.Parser
                 //parentheses
                 else if (parsed.Value.Length == 1)
                 {
-                    var groupParsed = Parse(parsed.Value[0], 0, module);
+                    var groupParsed = ParseExpression(parsed.Value[0], 0, module);
                     var group = new Group(groupParsed.Value);
                     return new ParseResult<Expression>(true, group, start + parsed.Position);
                 }
@@ -99,23 +99,18 @@ namespace ElmRuntime2.Parser
             //case pattern
             else if (stream.IsAt(position, TokenType.Case))
             {
-                if (!stream.IsAt(position + 1, TokenType.Identifier))
-                {
-                    throw new ParserException($"Unexpected token while parsing case expression");
-                }
-
-                var subjectParsed = Parse(stream, position + 1, module);
+                var subjectParsed = ParseExpression(stream, position + 1, module);
                 var subject = subjectParsed.Value;
+                position = subjectParsed.Position;
 
-                if (!stream.IsAt(position + 2, TokenType.Of))
+                if (!stream.IsAt(position, TokenType.Of))
                 {
                     throw new ParserException($"Unexpected token while parsing case expression");
                 }
+                position++;
 
-                position += 3;
                 var column = stream.At(position).Column;
                 var patterns = new List<CasePattern>();
-
                 while (position < stream.Length && column <= stream.At(position).Column)
                 {
                     var conditionParsed = PatternParser.ParsePattern(stream, position);
@@ -126,7 +121,7 @@ namespace ElmRuntime2.Parser
                         throw new ParserException($"Unexpected token while parsing case expression");
                     }
 
-                    var expressionParsed = Parse(stream, position + 1, module);
+                    var expressionParsed = ParseExpression(stream, position + 1, module);
                     position = expressionParsed.Position;
 
                     patterns.Add(new CasePattern(conditionParsed.Value, expressionParsed.Value));
@@ -137,19 +132,19 @@ namespace ElmRuntime2.Parser
             }
             else if (stream.IsAt(position, TokenType.If))
             {
-                var condition = Parse(stream, position + 1, module);
+                var condition = ParseExpression(stream, position + 1, module);
                 if (!stream.IsAt(condition.Position, TokenType.Then))
                 {
                     throw new ParserException($"Unable to parse if expression, cannot find then");
                 }
 
-                var then = Parse(stream, condition.Position + 1, module);
+                var then = ParseExpression(stream, condition.Position + 1, module);
                 if (!stream.IsAt(then.Position, TokenType.Else))
                 {
                     throw new ParserException($"Unable to parse if expression, cannot find else");
                 }
 
-                var @else = Parse(stream, then.Position + 1, module);
+                var @else = ParseExpression(stream, then.Position + 1, module);
                 if (!@else.Success)
                 {
                     throw new ParserException($"Unexpected end of if expression");

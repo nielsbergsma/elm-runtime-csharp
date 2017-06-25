@@ -10,7 +10,7 @@ namespace ElmRuntime2.Parser
 {
     public static class ModuleImports
     {
-        public static ParseResult<ModuleImport[]> Parse(TokenStream stream, int position)
+        public static ParseResult<ModuleImport[]> ParseImport(TokenStream stream, int position)
         {
             var imports = new List<ModuleImport>();
 
