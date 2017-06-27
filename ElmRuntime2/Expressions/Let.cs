@@ -23,7 +23,15 @@ namespace ElmRuntime2.Expressions
 
             foreach (var item in initialization)
             {
-                item.Evaluate(arguments, letScope);
+                if (item is Function)
+                {
+                    var function = item as Function;
+                    letScope.Set(function.Name, function);
+                }
+                else
+                {
+                    item.Evaluate(arguments, letScope);
+                }
             }
 
             return result.Evaluate(arguments, letScope);

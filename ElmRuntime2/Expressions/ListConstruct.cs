@@ -25,7 +25,7 @@ namespace ElmRuntime2.Expressions
             foreach(var expression in expressions)
             {
                 var value = expression.Evaluate(arguments, scope) as Value;
-                values.Add(value as Value);
+                values.Add(value);
             }
 
             return new List(values.ToArray());

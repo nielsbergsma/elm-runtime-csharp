@@ -13,7 +13,7 @@ namespace ElmRuntime2.Parser
     {
         public static ParseResult<Let> ParseLet(TokenStream stream, int position, Module module)
         {
-            if(!stream.IsAt(position, Lexer.TokenType.Let))
+            if(!stream.IsAt(position, TokenType.Let))
             {
                 throw new ParserException($"Unexpected start of let expression");
             }
@@ -35,7 +35,7 @@ namespace ElmRuntime2.Parser
                     position = pattern.Position;
                 }
                 //type definition
-                else if (stream.IsAt(position, TokenType.Identifier) && !stream.ContainsInExpression(position, TokenType.Assign))
+                else if (stream.IsAt(position, TokenType.Identifier, TokenType.Colon))
                 {
                     position = stream.SkipToNextExpression(position);
                 }
@@ -57,7 +57,7 @@ namespace ElmRuntime2.Parser
                 }
             }
 
-            if (!stream.IsAt(position, Lexer.TokenType.In))
+            if (!stream.IsAt(position, TokenType.In))
             {
                 throw new ParserException($"Unexpected token in let expression, expected in keyword");
             }

@@ -24,7 +24,8 @@ namespace ElmRuntime2.Expressions
 
         public Expression Evaluate(Expression[] arguments, Scope scope)
         {
-            throw new NotImplementedException();
+            scope.Set(alias, arguments[0]);
+            return pattern.Evaluate(arguments, scope);
         }
     }
 

@@ -49,9 +49,10 @@
     <Compile Include="Expressions\Group.cs" />
     <Compile Include="Expressions\If.cs" />
     <Compile Include="Expressions\Invocation.cs" />
+    <Compile Include="Expressions\LambdaConstruct.cs" />
     <Compile Include="Expressions\Let.cs" />
     <Compile Include="Expressions\Pattern.cs" />
-    <Compile Include="Expressions\Tuple.cs" />
+    <Compile Include="Expressions\TupleConstruct.cs" />
     <Compile Include="Lexer\CharLexer.cs" />
     <Compile Include="Lexer\CommentIgnoreLexer.cs" />
     <Compile Include="Lexer\IdentifierLexer.cs" />
@@ -75,7 +76,7 @@
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Function.cs" />
     <Compile Include="Expressions\Lambda.cs" />
-    <Compile Include="Expressions\List.cs" />
+    <Compile Include="Expressions\ListConstruct.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\FunctionParser.cs" />
     <Compile Include="Parser\LetParser.cs" />

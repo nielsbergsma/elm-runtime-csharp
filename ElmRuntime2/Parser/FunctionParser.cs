@@ -55,7 +55,7 @@ namespace ElmRuntime2.Parser
             }
 
             var function = new Function(name, arguments.ToArray(), parsedExpression.Value);
-            return new ParseResult<Function>(true, function, position);
+            return new ParseResult<Function>(true, function, parsedExpression.Position);
         }
     }
 }

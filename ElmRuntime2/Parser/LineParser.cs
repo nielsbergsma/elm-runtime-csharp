@@ -47,13 +47,13 @@ namespace ElmRuntime2.Parser
                 var nextExpressionStart = stream.SkipToNextExpression(position);
                 return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
-            //operator (ignore - already parsed)
+            //operator (already parsed)
             else if (stream.IsAt(position, TokenType.LeftParen) && stream.ContainsInExpression(position + 1, TokenType.RightParen))
             {
                 var nextExpressionStart = stream.SkipToNextExpression(position);
                 return new ParseResult<Expression>(false, default(Expression), nextExpressionStart);
             }
-            //set association + precedence of operator (ignore - already done)
+            //set association + precedence of operator (already done)
             else if (stream.IsAnyAt(position, TokenType.Infix, TokenType.Infixl, TokenType.Infixr))
             {
                 var nextExpressionStart = stream.SkipToNextExpression(position);
