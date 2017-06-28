@@ -8,18 +8,18 @@ using ElmRuntime2.Exceptions;
 
 namespace ElmRuntime2.Expressions
 {
-    public class Invocation : Expression
+    public class Call : Expression
     {
         private readonly string name;
         private readonly List<Expression> arguments;
 
-        public Invocation(string name) 
+        public Call(string name) 
             : this(name, new Expression[0])
         {
 
         }
 
-        public Invocation(string name, params Expression[] arguments)
+        public Call(string name, params Expression[] arguments)
         {
             this.name = name;
             this.arguments = arguments.ToList();
@@ -32,7 +32,7 @@ namespace ElmRuntime2.Expressions
             {
                 return expression.Evaluate(this.arguments.ToArray(), scope);
             }
-            throw new RuntimeException($"Unable to invoke {name}");
+            throw new RuntimeException($"Unable to call {name}");
         }
 
         public void PrependArgument(Expression argument)

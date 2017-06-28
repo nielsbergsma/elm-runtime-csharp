@@ -194,11 +194,11 @@ namespace ElmRuntime2.Parser
                 var negate = symbol == "-" && stream.At(position).Column + 1 == stream.At(position + 1).Column;
                 if (negate)
                 {
-                    expression = new Invocation("_neg_", termParsed.Value);
+                    expression = new Call("_neg_", termParsed.Value);
                 }
                 else
                 {
-                    expression = new Invocation(symbol, termParsed.Value);
+                    expression = new Call(symbol, termParsed.Value);
                 }
                 
                 position = termParsed.Position;
@@ -234,7 +234,7 @@ namespace ElmRuntime2.Parser
             {
                 var name = stream.At(position).Content;
 
-                expression = new Invocation(name, new Expression[0]);
+                expression = new Call(name, new Expression[0]);
                 position += 1;
             }
 
@@ -246,17 +246,17 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected end expression");
                 }
 
-                if (termParsed.Value is Invocation)
+                if (termParsed.Value is Call)
                 {
-                    var @operator = termParsed.Value as Invocation;
+                    var @operator = termParsed.Value as Call;
                     @operator.PrependArgument(expression); //TODO: check this
 
                     expression = @operator;
                     position = termParsed.Position;
                 }
-                else if (expression is Invocation)
+                else if (expression is Call)
                 {
-                    (expression as Invocation).AppendArgument(termParsed.Value);
+                    (expression as Call).AppendArgument(termParsed.Value);
                     position = termParsed.Position;
                 }
                 else
