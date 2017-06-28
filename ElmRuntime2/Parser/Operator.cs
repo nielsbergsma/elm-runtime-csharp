@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Exceptions;
+﻿using ElmRuntime2.Core.Operators;
+using ElmRuntime2.Exceptions;
 using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
 using ElmRuntime2.Values;
@@ -30,10 +31,16 @@ namespace ElmRuntime2.Parser
         }
 
         public Operator(string symbol, int precedence, OperatorAssociativity associativity)
+            : this(symbol, precedence, associativity, null)
+        {
+        }
+
+        public Operator(string symbol, int precedence, OperatorAssociativity associativity, Function evaluator)
         {
             this.symbol = symbol;
             this.precedence = precedence;
             this.associativity = associativity;
+            this.evaluator = evaluator;
         }
 
         public string Symbol
@@ -79,8 +86,8 @@ namespace ElmRuntime2.Parser
             { "%", new Operator("%", 7, OperatorAssociativity.Left) },
             { "/", new Operator("/", 7, OperatorAssociativity.Left) },
             { "//", new Operator("//", 7, OperatorAssociativity.Left) },
-            { "+", new Operator("+", 6, OperatorAssociativity.Left) },
-            { "-", new Operator("-", 6, OperatorAssociativity.Left) },
+            { "+", new Operator("+", 6, OperatorAssociativity.Left, Plus.AsFunction()) },
+            { "-", new Operator("-", 6, OperatorAssociativity.Left, Minus.AsFunction()) },
             { "++", new Operator("++", 5, OperatorAssociativity.Right) },
             { "::", new Operator("::", 5, OperatorAssociativity.Right) },
 
@@ -93,7 +100,6 @@ namespace ElmRuntime2.Parser
 
             { "&&", new Operator("&&", 3, OperatorAssociativity.Right) },
             { "||", new Operator("||", 2, OperatorAssociativity.Right) },
-
             { "<|", new Operator("<|", 0, OperatorAssociativity.Right) },
             { "|>", new Operator("|>", 0, OperatorAssociativity.Left) },
         };

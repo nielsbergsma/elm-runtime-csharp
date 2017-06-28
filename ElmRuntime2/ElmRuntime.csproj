@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Operators\Minus.cs" />
+    <Compile Include="Core\Operators\Plus.cs" />
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Expressions\Case.cs" />
     <Compile Include="Expressions\FieldAccess.cs" />
@@ -51,6 +53,7 @@
     <Compile Include="Expressions\Invocation.cs" />
     <Compile Include="Expressions\LambdaConstruct.cs" />
     <Compile Include="Expressions\Let.cs" />
+    <Compile Include="Expressions\OperatorInvocation.cs" />
     <Compile Include="Expressions\Pattern.cs" />
     <Compile Include="Expressions\TupleConstruct.cs" />
     <Compile Include="Lexer\CharLexer.cs" />

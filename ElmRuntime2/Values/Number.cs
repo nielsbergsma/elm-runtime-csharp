@@ -8,5 +8,7 @@ namespace ElmRuntime2.Values
 {
     public interface Number : Value
     {
+        int AsInt();
+        float AsFloat();
     }
 }

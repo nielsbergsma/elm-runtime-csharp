@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Lexer;
+﻿using ElmRuntime2.Expressions;
+using ElmRuntime2.Lexer;
 using ElmRuntime2.Parser;
 using ElmRuntime2.Values;
 using System;
@@ -17,14 +18,14 @@ namespace ElmRuntime2
             var source = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
             var lexer = ElmLexer.Lex(source);
 
-            var position = 0;
-            for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
-            {
-                Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
-            }
+            //var position = 0;
+            //for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
+            //{
+            //    Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
+            //}
 
-            //add = \n -> ((\m n-> m + n) n)
-            lexer.Reset();
+            ////add = \n -> ((\m n-> m + n) n)
+            //lexer.Reset();
 
             var tokens = new TokenStream(lexer);
             var module = Module.Parse(tokens, 0);
@@ -61,7 +62,6 @@ namespace ElmRuntime2
 
             stopwatch.Stop();
             Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms");
-         }
+         }        
     }
 }
-

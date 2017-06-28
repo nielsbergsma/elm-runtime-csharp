@@ -79,6 +79,11 @@ namespace ElmRuntime2.Parser
             get { return operators.Values; }
         }
 
+        public Operator GetOperator(string symbol)
+        {
+            return operators[symbol];
+        }
+
         public Expression Evaluate(string name)
         {
             return Evaluate(name, new Value[0], new Scope());

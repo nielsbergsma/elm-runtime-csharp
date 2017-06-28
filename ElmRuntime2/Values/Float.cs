@@ -19,9 +19,15 @@ namespace ElmRuntime2.Values
             this.value = value;
         }
 
-        public float Value
+
+        public float AsFloat()
         {
-            get { return value; }
+            return value;
+        }
+
+        public int AsInt()
+        {
+            return (int) value;
         }
 
         public Expression Evaluate(Expression[] arguments, Scope scope)
