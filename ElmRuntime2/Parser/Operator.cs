@@ -1,4 +1,4 @@
-﻿using ElmRuntime2.Core.Operators;
+﻿using ElmRuntime2.Native.Operators;
 using ElmRuntime2.Exceptions;
 using ElmRuntime2.Expressions;
 using ElmRuntime2.Lexer;
@@ -86,8 +86,8 @@ namespace ElmRuntime2.Parser
             { "%", new Operator("%", 7, OperatorAssociativity.Left) },
             { "/", new Operator("/", 7, OperatorAssociativity.Left) },
             { "//", new Operator("//", 7, OperatorAssociativity.Left) },
-            { "+", new Operator("+", 6, OperatorAssociativity.Left, Plus.AsFunction()) },
-            { "-", new Operator("-", 6, OperatorAssociativity.Left, Minus.AsFunction()) },
+            { "+", new Operator("+", 6, OperatorAssociativity.Left) },
+            { "-", new Operator("-", 6, OperatorAssociativity.Left) },
             { "++", new Operator("++", 5, OperatorAssociativity.Right) },
             { "::", new Operator("::", 5, OperatorAssociativity.Right) },
 

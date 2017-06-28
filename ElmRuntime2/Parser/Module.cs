@@ -97,6 +97,10 @@ namespace ElmRuntime2.Parser
                 scope.Set(expression.Key, expression.Value);
             }
 
+            scope.Set("+", new Native.Operators.Plus());
+            scope.Set("-", new Native.Operators.Minus());
+            scope.Set("_neg_", new Native.Operators.Negate());
+
             return expressions[name].Evaluate(arguments, scope);
         }
 

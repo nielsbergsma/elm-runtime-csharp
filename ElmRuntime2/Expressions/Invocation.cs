@@ -13,7 +13,13 @@ namespace ElmRuntime2.Expressions
         private readonly string name;
         private readonly List<Expression> arguments;
 
-        public Invocation(string name, Expression[] arguments)
+        public Invocation(string name) 
+            : this(name, new Expression[0])
+        {
+
+        }
+
+        public Invocation(string name, params Expression[] arguments)
         {
             this.name = name;
             this.arguments = arguments.ToList();
@@ -29,7 +35,12 @@ namespace ElmRuntime2.Expressions
             throw new RuntimeException($"Unable to invoke {name}");
         }
 
-        public void AddArgument(Expression argument)
+        public void PrependArgument(Expression argument)
+        {
+            arguments.Insert(0, argument);
+        }
+
+        public void AppendArgument(Expression argument)
         {
             arguments.Add(argument);
         }

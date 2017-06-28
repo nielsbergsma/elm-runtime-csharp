@@ -184,16 +184,23 @@ namespace ElmRuntime2.Parser
             else if (stream.IsAt(position, TokenType.OpInfix))
             {
                 var symbol = stream.At(position).Content;
-                var @operator = module.GetOperator(symbol);
+
                 var termParsed = ParseExpression(stream, position + 1, module, false);
                 if (!termParsed.Success)
                 {
                     throw new ParserException($"Unexpected token while parsing opeartor expression");
                 }
 
-                var invocation = new OperatorInvocation(@operator);
-                invocation.SetRHS(termParsed.Value);
-                expression = invocation;
+                var negate = symbol == "-" && stream.At(position).Column + 1 == stream.At(position + 1).Column;
+                if (negate)
+                {
+                    expression = new Invocation("_neg_", termParsed.Value);
+                }
+                else
+                {
+                    expression = new Invocation(symbol, termParsed.Value);
+                }
+                
                 position = termParsed.Position;
             }
             else if (stream.IsAt(position, TokenType.OpPrefix))
@@ -239,17 +246,17 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected end expression");
                 }
 
-                if (termParsed.Value is OperatorInvocation)
+                if (termParsed.Value is Invocation)
                 {
-                    var @operator = termParsed.Value as OperatorInvocation;
-                    @operator.SetLHS(expression);
+                    var @operator = termParsed.Value as Invocation;
+                    @operator.PrependArgument(expression); //TODO: check this
 
                     expression = @operator;
                     position = termParsed.Position;
                 }
                 else if (expression is Invocation)
                 {
-                    (expression as Invocation).AddArgument(termParsed.Value);
+                    (expression as Invocation).AppendArgument(termParsed.Value);
                     position = termParsed.Position;
                 }
                 else
