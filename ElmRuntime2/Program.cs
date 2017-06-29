@@ -28,7 +28,7 @@ namespace ElmRuntime2
             //lexer.Reset();
 
             var tokens = new TokenStream(lexer);
-            var module = Module.Parse(tokens, 0);
+            var module = ModuleParser.ParseModule(tokens, 0);
             var scope = new Scope();
             //var foo = new Record();
             //scope.Set("foo", foo);

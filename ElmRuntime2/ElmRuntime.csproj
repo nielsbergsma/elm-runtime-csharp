@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Native\Operators\Minus.cs" />
     <Compile Include="Native\Operators\Negate.cs" />
+    <Compile Include="Native\Operators\Operator.cs" />
     <Compile Include="Native\Operators\Plus.cs" />
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Expressions\Case.cs" />
@@ -85,9 +86,10 @@
     <Compile Include="Parser\LetParser.cs" />
     <Compile Include="Parser\LineParser.cs" />
     <Compile Include="Parser\ListParser.cs" />
-    <Compile Include="Parser\ModuleImports.cs" />
-    <Compile Include="Parser\Module.cs" />
-    <Compile Include="Parser\ModuleExposes.cs" />
+    <Compile Include="Expressions\ModuleImports.cs" />
+    <Compile Include="Expressions\Module.cs" />
+    <Compile Include="Expressions\ModuleExposes.cs" />
+    <Compile Include="Parser\ModuleParser.cs" />
     <Compile Include="Parser\Operator.cs" />
     <Compile Include="Parser\OperatorParser.cs" />
     <Compile Include="Parser\ParserHelper.cs" />

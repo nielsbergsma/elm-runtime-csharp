@@ -18,12 +18,11 @@ namespace ElmRuntime2.Parser
         Right
     }
 
-    public class Operator : Expression, IComparable<Operator>
+    public class Operator : IComparable<Operator>
     {
         private readonly string symbol;
         private int precedence;
         private OperatorAssociativity associativity;
-        private Function evaluator;
 
         public Operator(string symbol)
             : this(symbol, 9, OperatorAssociativity.Left)
@@ -31,16 +30,10 @@ namespace ElmRuntime2.Parser
         }
 
         public Operator(string symbol, int precedence, OperatorAssociativity associativity)
-            : this(symbol, precedence, associativity, null)
-        {
-        }
-
-        public Operator(string symbol, int precedence, OperatorAssociativity associativity, Function evaluator)
         {
             this.symbol = symbol;
             this.precedence = precedence;
             this.associativity = associativity;
-            this.evaluator = evaluator;
         }
 
         public string Symbol
@@ -54,16 +47,6 @@ namespace ElmRuntime2.Parser
             this.associativity = associativity;
         }
 
-        public void SetEvaluator(Function evaluator)
-        {
-            this.evaluator = evaluator;
-        }
-
-        public Expression Evaluate(Expression[] arguments, Scope scope)
-        {
-            return evaluator.Evaluate(arguments, scope);
-        }
-
         public int Precedence
         {
             get { return precedence; }
@@ -73,35 +56,5 @@ namespace ElmRuntime2.Parser
         {
             return Precedence - other.Precedence;
         }
-    }
-
-    public static class Core
-    {
-        public static Dictionary<string, Operator> Operators = new Dictionary<string, Operator>
-        {
-            { ">>", new Operator(">>", 9, OperatorAssociativity.Left) },
-            { "<<", new Operator("<<", 9, OperatorAssociativity.Right) },
-            { "^", new Operator("^", 8, OperatorAssociativity.Right) },
-            { "*", new Operator("*", 7, OperatorAssociativity.Left) },
-            { "%", new Operator("%", 7, OperatorAssociativity.Left) },
-            { "/", new Operator("/", 7, OperatorAssociativity.Left) },
-            { "//", new Operator("//", 7, OperatorAssociativity.Left) },
-            { "+", new Operator("+", 6, OperatorAssociativity.Left) },
-            { "-", new Operator("-", 6, OperatorAssociativity.Left) },
-            { "++", new Operator("++", 5, OperatorAssociativity.Right) },
-            { "::", new Operator("::", 5, OperatorAssociativity.Right) },
-
-            { "==", new Operator("==", 4, OperatorAssociativity.NoAssociativity) },
-            { "/=", new Operator("/=", 4, OperatorAssociativity.NoAssociativity) },
-            { "<", new Operator("<", 4, OperatorAssociativity.NoAssociativity) },
-            { ">", new Operator(">", 4, OperatorAssociativity.NoAssociativity) },
-            { "<=", new Operator("<=", 4, OperatorAssociativity.NoAssociativity) },
-            { ">=", new Operator(">=", 4, OperatorAssociativity.NoAssociativity) },
-
-            { "&&", new Operator("&&", 3, OperatorAssociativity.Right) },
-            { "||", new Operator("||", 2, OperatorAssociativity.Right) },
-            { "<|", new Operator("<|", 0, OperatorAssociativity.Right) },
-            { "|>", new Operator("|>", 0, OperatorAssociativity.Left) },
-        };
     }
 }

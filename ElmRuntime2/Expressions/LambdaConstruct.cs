@@ -19,7 +19,7 @@ namespace ElmRuntime2.Expressions
 
         public Expression Evaluate(Expression[] arguments, Scope scope)
         {
-            return new Lambda(scope.Unwrap(), this.arguments, this.expression);
+            return new Lambda(scope.Unwrap(), this.arguments, this.expression).Evaluate(arguments, scope);
         }
     }
 }
