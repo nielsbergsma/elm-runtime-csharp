@@ -23,8 +23,8 @@ namespace ElmRuntime2.Native.Operators
                 return Curry(scope, argumentValues);
             }
 
-            var left = argumentValues[0].Evaluate(scope);
-            var right = argumentValues[1].Evaluate(scope);
+            var left = argumentValues[0];
+            var right = argumentValues[1];
 
             if (left is Integer && right is Integer)
             {

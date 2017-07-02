@@ -17,7 +17,7 @@ namespace ElmRuntime2.Native.Operators
 
         public override Expression Evaluate(Scope scope, Expression[] argumentValues)
         {
-            var value = argumentValues[0].Evaluate(scope);
+            var value = argumentValues[0];
             if (value is Integer)
             {
                 return new Integer(-(value as Integer).AsInt());

@@ -4,6 +4,7 @@ using ElmRuntime2.Parser;
 using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,14 +20,16 @@ namespace ElmRuntime2
             var lexer = ElmLexer.Lex(source);
             var tokens = new TokenStream(lexer);
 
-            for (var t = 0; t < tokens.Length; t++)
-            {
-                Console.WriteLine($"Token [{t.ToString("000")}][{tokens.At(t).Type}] {tokens.At(t).Content}");
-            }
+            //for (var t = 0; t < tokens.Length; t++)
+            //{
+            //    Console.WriteLine($"Token [{t.ToString("000")}][{tokens.At(t).Type}] {tokens.At(t).Content}");
+            //}
 
             var module = ModuleParser.ParseModule(tokens, 0);
             var scope = new Scope();
 
+            var integer = new Integer(2);
+            
             //var list = new List(
             //    new Integer(4),
             //    new Integer(2),
@@ -45,14 +48,18 @@ namespace ElmRuntime2
             //    .Set("bar", new Values.String("you're welcome"))
             //    .Set("qux", new Values.Boolean(false));
 
-            var union = new UnionConstructor("Some", new Integer(1), new Integer(-88));
-            var tuple = new Values.Tuple(union, new Values.String("yes"));
+            //var union = new UnionConstructor("Some", new Integer(1), new Integer(-88));
+            //var tuple = new Values.Tuple(union, new Values.String("yes"));
 
+            var executingStopwatch = new Stopwatch();
+            executingStopwatch.Start();
 
-            //new Integer(2)
-            var result = module.Evaluate("main", tuple);
+            var result = module.Evaluate("main", integer);
+
+            executingStopwatch.Stop();
+
             Console.WriteLine();
-            Console.WriteLine($"Evaluation result: {result} ({result.GetType().Name})");
+            Console.WriteLine($"Evaluation result: {result} ({result.GetType().Name}) in {executingStopwatch.ElapsedMilliseconds}ms");
          }        
     }
 }
