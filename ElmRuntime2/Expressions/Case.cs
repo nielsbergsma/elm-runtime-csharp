@@ -18,16 +18,14 @@ namespace ElmRuntime2.Expressions
             this.patterns = patterns;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             var caseScope = new Scope(scope);
-            var patternArguments = new Expression[] {
-                subject.Evaluate(arguments, scope)
-            };
+            var subjectValue = subject.Evaluate(scope);
 
             foreach (var pattern in patterns)
             {
-                var result = pattern.Evaluate(patternArguments, caseScope);
+                var result = pattern.Evaluate(caseScope, subjectValue);
                 if (result.Item1)
                 {
                     return result.Item2;
@@ -40,23 +38,23 @@ namespace ElmRuntime2.Expressions
 
     public class CasePattern
     {
-        private readonly Expression condition;
+        private readonly Pattern condition;
         private readonly Expression expression;
 
-        public CasePattern(Expression condition, Expression expression)
+        public CasePattern(Pattern condition, Expression expression)
         {
             this.condition = condition;
             this.expression = expression;
         }
 
-        public Tuple<bool, Expression> Evaluate(Expression[] arguments, Scope scope)
+        public Tuple<bool, Expression> Evaluate(Scope scope, Expression value)
         {
             var casePatternScope = new Scope(scope);
-            var matches = condition.Evaluate(arguments, casePatternScope);
 
-            if (matches is Values.Boolean && (matches as Values.Boolean).Value)
+            var match = condition.Evaluate(casePatternScope, value);
+            if (match)
             {
-                var result = expression.Evaluate(arguments, casePatternScope);
+                var result = expression.Evaluate(casePatternScope);
                 return System.Tuple.Create(true, result);
             }
             else

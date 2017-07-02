@@ -13,26 +13,38 @@ namespace ElmRuntime2.Parser
     {
         public static ParseResult<Let> ParseLet(TokenStream stream, int position, Module module)
         {
-            if(!stream.IsAt(position, TokenType.Let))
+            if (!stream.IsAt(position, TokenType.Let))
             {
                 throw new ParserException($"Unexpected start of let expression");
             }
             position++;
 
             var initialization = new List<Expression>();
-            while (position <stream.Length && !stream.IsAt(position, TokenType.In))
+            while (position < stream.Length && !stream.IsAt(position, TokenType.In))
             {
-                //deconstructive pattern
+                //deconstructive assignment
                 if (stream.IsAnyAt(position, TokenType.LeftParen, TokenType.LeftBrace))
                 {
                     var pattern = PatternParser.ParsePattern(stream, position);
                     if (!pattern.Success)
                     {
-                        throw new ParserException($"Invalid pattern in let expression");
+                        throw new ParserException($"Invalid deconstructive assignment in let expression");
+                    }
+                    position = pattern.Position;
+
+                    if (!stream.IsAt(position, TokenType.Assign))
+                    {
+                        throw new ParserException($"Invalid deconstructive assignment in let expression");
                     }
 
-                    initialization.Add(pattern.Value);
-                    position = pattern.Position;
+                    var expression = ExpressionParser.ParseExpression(stream, position + 1, module, true);
+                    if (!expression.Success)
+                    {
+                        throw new ParserException($"Invalid deconstructive assignment in let expression");
+                    }
+
+                    position = expression.Position;
+                    initialization.Add(new DeconstructiveAssignment(pattern.Value, expression.Value));
                 }
                 //type definition
                 else if (stream.IsAt(position, TokenType.Identifier, TokenType.Colon))
@@ -64,7 +76,7 @@ namespace ElmRuntime2.Parser
             position++;
 
             var resultParsed = ExpressionParser.ParseExpression(stream, position, module);
-            if(!resultParsed.Success)
+            if (!resultParsed.Success)
             {
                 throw new ParserException($"Unexpected token in let expression, expected result expression");
             }

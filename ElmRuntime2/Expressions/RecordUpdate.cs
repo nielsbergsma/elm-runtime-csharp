@@ -21,7 +21,7 @@ namespace ElmRuntime2.Expressions
             this.fieldExpressions = fieldExpressions;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             var recordValue = default(Expression);
             if (!scope.TryGet(name, out recordValue) || !(recordValue is Record))
@@ -33,7 +33,7 @@ namespace ElmRuntime2.Expressions
             var fieldValues = new List<RecordFieldValue>();
             foreach (var fieldExpression in fieldExpressions)
             {
-                var value = fieldExpression.Value.Evaluate(arguments, scope) as Value;
+                var value = fieldExpression.Value.Evaluate(scope) as Value;
                 var field = new RecordFieldValue(fieldExpression.Key, value);
                 fieldValues.Add(field);
             }

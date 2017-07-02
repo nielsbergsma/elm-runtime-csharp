@@ -17,7 +17,7 @@ namespace ElmRuntime2.Expressions
             this.result = result;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             var letScope = new Scope(scope);
 
@@ -30,11 +30,11 @@ namespace ElmRuntime2.Expressions
                 }
                 else
                 {
-                    item.Evaluate(arguments, letScope);
+                    item.Evaluate(letScope);
                 }
             }
 
-            return result.Evaluate(arguments, letScope);
+            return result.Evaluate(letScope);
         }
     }
 }

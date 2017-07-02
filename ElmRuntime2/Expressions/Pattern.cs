@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Expressions
 {
-    public interface Pattern : Expression
+    public interface Pattern
     {
+        bool Evaluate(Scope scope, Expression value);
     }
 
     public class AliasPattern : Pattern
@@ -22,18 +23,18 @@ namespace ElmRuntime2.Expressions
             this.alias = alias;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            scope.Set(alias, arguments[0]);
-            return pattern.Evaluate(arguments, scope);
+            scope.Set(alias, value);
+            return pattern.Evaluate(scope, value);
         }
     }
 
     public class UnderscorePattern : Pattern
     {
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            return new Values.Boolean(true);
+            return true;
         }
     }
 
@@ -51,11 +52,10 @@ namespace ElmRuntime2.Expressions
             this.name = name;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            scope.Set(name, arguments[0]);
-
-            return new Values.Boolean(true);
+            scope.Set(name, value);
+            return true;
         }
     }
 
@@ -68,11 +68,9 @@ namespace ElmRuntime2.Expressions
             this.value = value;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            return new Values.Boolean(
-                value.OperatorEquals(arguments[0])
-            );
+            return this.value.OperatorEquals(value);
         }
     }
 
@@ -85,25 +83,25 @@ namespace ElmRuntime2.Expressions
             this.items = items;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            var list = arguments[0] as List;
+
+            var list = value as List;
             if (list == null || list.Values.Length != items.Length)
             {
-                return new Values.Boolean(false);
+                return false;
             }
 
             for (var i = 0; i < items.Length; i++)
             {
-                var argument = new Expression[] { list.Values[i] };
-                var matches = items[i].Evaluate(argument, scope) as Values.Boolean;
-                if (!matches.Value)
+                var match = items[i].Evaluate(scope, list.Values[i]);
+                if (!match)
                 {
-                    return new Values.Boolean(false);
+                    return false;
                 }
             }
 
-            return new Values.Boolean(true);
+            return true;
         }
     }
 
@@ -116,25 +114,24 @@ namespace ElmRuntime2.Expressions
             this.items = items;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            var tuple = arguments[0] as Values.Tuple;
+            var tuple = value as Values.Tuple;
             if (tuple == null || tuple.Values.Length != items.Length)
             {
-                return new Values.Boolean(false);
+                return false;
             }
 
             for (var i = 0; i < items.Length; i++)
             {
-                var argument = new Expression[] { tuple.Values[i] };
-                var matches = items[i].Evaluate(argument, scope) as Values.Boolean;
-                if (!matches.Value)
+                var match = items[i].Evaluate(scope, tuple.Values[i]);
+                if (!match)
                 {
-                    return new Values.Boolean(false);
+                    return false;
                 }
             }
 
-            return new Values.Boolean(true);
+            return true;
         }
     }
 
@@ -147,29 +144,27 @@ namespace ElmRuntime2.Expressions
             this.fields = fields;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
             foreach (var field in fields)
             {
-                var evaluationArguments = arguments;
+                var fieldValue = default(Expression);
                 if (field is VariablePattern)
                 {
-                    var record = arguments[0] as Record;
+                    var record = value as Record;
                     var fieldName = (field as VariablePattern).Name;
-                    var fieldValue = default(Expression);
 
                     record.TryGet(fieldName, out fieldValue);
-                    evaluationArguments = new[] { fieldValue };
                 }
 
-                var matches = field.Evaluate(evaluationArguments, scope) as Values.Boolean;
-                if (!matches.Value)
+                var match = field.Evaluate(scope, fieldValue);
+                if (!match)
                 {
-                    return new Values.Boolean(false);
+                    return false;
                 }
             }
 
-            return new Values.Boolean(true);
+            return true;
         }
     }
 
@@ -184,21 +179,21 @@ namespace ElmRuntime2.Expressions
             this.tail = tail;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            var list = arguments[0] as List;
+            var list = value as List;
             if (list.Values.Length == 0)
             {
-                return new Values.Boolean(false);
+                return false;
             }
 
-            var headResult = head.Evaluate(new Expression[] { list.Head() }, scope) as Values.Boolean;
-            if (!headResult.Value)
+            var match = head.Evaluate(scope, list.Head());
+            if (!match)
             {
-                return headResult;
+                return match;
             }
 
-            return tail.Evaluate(new Expression[] { list.Tail() }, scope);
+            return tail.Evaluate(scope, list.Tail());
         }
     }
 
@@ -213,30 +208,30 @@ namespace ElmRuntime2.Expressions
             this.values = values;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public bool Evaluate(Scope scope, Expression value)
         {
-            var union = arguments[0] as UnionConstructor;
+            var union = value as UnionConstructor;
             if (union.Constructor != constructor)
             {
-                return new Values.Boolean(false);
+                return false;
             }
-             
+
             for (var v = 0; v < values.Length; v++)
             {
                 var argumentValue = default(Expression);
                 if (!union.TryGet(v, out argumentValue))
                 {
-                    return new Values.Boolean(false);
+                    return false;
                 }
 
-                var result = values[v].Evaluate(new[] { argumentValue }, scope) as Values.Boolean;
-                if (!result.Value)
+                var result = values[v].Evaluate(scope, argumentValue);
+                if (!result)
                 {
-                    return new Values.Boolean(false);
+                    return false;
                 }
             }
 
-            return new Values.Boolean(true);
+            return true;
         }
     }
 }

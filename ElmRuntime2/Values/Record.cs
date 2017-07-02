@@ -25,7 +25,7 @@ namespace ElmRuntime2.Values
             this.fields = fields;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             return this;
         }
@@ -78,6 +78,11 @@ namespace ElmRuntime2.Values
         public bool OperatorLesserThan(Expression op2)
         {
             return false;
+        }
+
+        public override string ToString()
+        {
+            return $"{{{string.Join(",", fields.Select(f => f.Key + ": " + f.Value.ToString()))}}}";
         }
     }
 }

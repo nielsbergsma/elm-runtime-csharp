@@ -36,7 +36,10 @@ namespace ElmRuntime2.Lexer
                 var columnOffset = token.Value.Content.IndexOf(sanitisedContent);
                 for(var sc = sanitisedContent.Length - 1; sc >= 0; sc--)
                 {
-                    head.Push(new Token(token.Value.Line, token.Value.Column + columnOffset + sc, TokenType.Undetermined, sanitisedContent[sc].ToString()));
+                    if (!char.IsWhiteSpace(sanitisedContent[sc]))
+                    {
+                        head.Push(new Token(token.Value.Line, token.Value.Column + columnOffset + sc, TokenType.Undetermined, sanitisedContent[sc].ToString()));
+                    }
                 }
             }
         }

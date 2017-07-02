@@ -19,12 +19,12 @@ namespace ElmRuntime2.Expressions
             this.expressions = expressions;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             var values = new List<Value>();
             foreach(var expression in expressions)
             {
-                var result = expression.Evaluate(arguments, scope);
+                var result = expression.Evaluate(scope);
                 if (!(result is Value))
                 {
                     throw new RuntimeException("Tuple expression must be evaluated to a value");

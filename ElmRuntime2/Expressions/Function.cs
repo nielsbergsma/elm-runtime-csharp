@@ -12,9 +12,9 @@ namespace ElmRuntime2.Expressions
 {
     public class Function : Expression
     {
-        private readonly string name;
-        private readonly Pattern[] arguments;
-        private readonly Expression expression;
+        protected readonly string name;
+        protected readonly Pattern[] arguments;
+        protected readonly Expression expression;
 
         public Function(string name, Pattern[] arguments, Expression expression)
         {
@@ -27,31 +27,51 @@ namespace ElmRuntime2.Expressions
         {
             get { return name; }
         }
-        
-        public Expression Evaluate(Expression[] arguments, Scope scope)
-        {
-            var expressionScope = new Scope(scope);
 
-            //bring arguments into scope
-            for (var a = 0; a < arguments.Length && a < this.arguments.Length; a++)
+        public int NumberOfArguments
+        {
+            get { return arguments.Length; }
+        }
+
+        public Pattern[] Arguments
+        {
+            get { return arguments; }
+        }
+
+        public Function Curry(Scope scope, Expression[] argumentValues)
+        {
+            if (argumentValues.Length == 0)
             {
-                this.arguments[a].Evaluate(new Expression[] { arguments[a] }, expressionScope);
+                return this;
+            }
+            else
+            {
+                return new Closure(this, scope, argumentValues);
+            }
+        }
+
+        public virtual Expression Evaluate(Scope scope)
+        {
+            return Evaluate(scope, new Expression[0]);
+        }
+
+        public virtual Expression Evaluate(Scope scope, Expression[] argumentValues)
+        {
+            if (argumentValues.Length < NumberOfArguments)
+            {
+                return Curry(scope, argumentValues);
             }
 
-            //curry function
-            if (arguments.Length < this.arguments.Length)
-            {
-                var newArguments = new List<Pattern>();
-                for (var a = arguments.Length; a < this.arguments.Length; a++)
-                {
-                    newArguments.Add(this.arguments[a]);
-                }
+            //bring arguments into scope
+            var functionScope = new Scope(scope);
 
-                return new Lambda(expressionScope.Unwrap(), newArguments.ToArray(), expression);
+            for (var a = 0; a < arguments.Length && a < argumentValues.Length; a++)
+            {
+                 arguments[a].Evaluate(functionScope, argumentValues[a]);
             }
 
             //evaluate
-            return expression.Evaluate(arguments, expressionScope);
+            return expression.Evaluate(functionScope);
         }        
     }
 }

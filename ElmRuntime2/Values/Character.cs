@@ -24,7 +24,7 @@ namespace ElmRuntime2.Values
             get { return value; }
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             return this;
         }
@@ -37,6 +37,11 @@ namespace ElmRuntime2.Values
         public bool OperatorLesserThan(Expression op2)
         {
             return op2 is Character && (op2 as Character).value < value;
+        }
+
+        public override string ToString()
+        {
+            return $"'{value.ToString()}'";
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ElmRuntime2.Values
             return value;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             return this;
         }
@@ -47,6 +47,11 @@ namespace ElmRuntime2.Values
         public Float ToFloat()
         {
             return new Float(value);
+        }
+
+        public override string ToString()
+        {
+            return value.ToString();
         }
     }
 }

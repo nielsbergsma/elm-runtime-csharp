@@ -9,6 +9,6 @@ namespace ElmRuntime2.Expressions
 {
     public interface Expression
     {
-        Expression Evaluate(Expression[] arguments, Scope scope);
+        Expression Evaluate(Scope scope);
     }
 }

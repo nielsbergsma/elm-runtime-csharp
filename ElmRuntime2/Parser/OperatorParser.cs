@@ -38,7 +38,7 @@ namespace ElmRuntime2.Parser
                     {
                         var prefix = t > 0 && tokens[t - 1].Type == TokenType.LeftParen
                             && t + size < tokens.Count && tokens[t + size].Type == TokenType.RightParen;
-
+                        
                         if (prefix)
                         {
                             var token = new Token(tokens[t].Line, tokens[t].Column, TokenType.OpPrefix, @operator.Symbol);

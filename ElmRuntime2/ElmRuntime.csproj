@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\Closure.cs" />
+    <Compile Include="Expressions\DeconstructiveAssignment.cs" />
     <Compile Include="Native\Operators\Minus.cs" />
     <Compile Include="Native\Operators\Negate.cs" />
     <Compile Include="Native\Operators\Operator.cs" />
@@ -50,10 +52,8 @@
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Expressions\Case.cs" />
     <Compile Include="Expressions\FieldAccess.cs" />
-    <Compile Include="Expressions\Group.cs" />
     <Compile Include="Expressions\If.cs" />
     <Compile Include="Expressions\Call.cs" />
-    <Compile Include="Expressions\LambdaConstruct.cs" />
     <Compile Include="Expressions\Let.cs" />
     <Compile Include="Expressions\Pattern.cs" />
     <Compile Include="Expressions\TupleConstruct.cs" />
@@ -79,7 +79,6 @@
     <Compile Include="Lexer\TokenType.cs" />
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Function.cs" />
-    <Compile Include="Expressions\Lambda.cs" />
     <Compile Include="Expressions\ListConstruct.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\FunctionParser.cs" />

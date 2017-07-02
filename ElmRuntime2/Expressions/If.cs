@@ -20,9 +20,9 @@ namespace ElmRuntime2.Expressions
             this.@else = @else;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
-            var result = condition.Evaluate(arguments, scope);
+            var result = condition.Evaluate(scope);
             if (!(result is Values.Boolean))
             {
                 throw new RuntimeException("If condition did not result in boolean value");
@@ -30,11 +30,11 @@ namespace ElmRuntime2.Expressions
 
             if ((result as Values.Boolean).Value)
             {
-                return then.Evaluate(arguments, scope);
+                return then.Evaluate(scope);
             }
             else
             {
-                return @else.Evaluate(arguments, scope);
+                return @else.Evaluate(scope);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace ElmRuntime2.Values
             get { return value; }
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             return this;
         }
@@ -38,5 +38,9 @@ namespace ElmRuntime2.Values
             return false;
         }
 
+        public override string ToString()
+        {
+            return value.ToString();
+        }
     }
 }

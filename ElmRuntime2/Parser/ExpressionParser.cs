@@ -99,7 +99,7 @@ namespace ElmRuntime2.Parser
                 {
                     var groupParsed = ParseExpression(parsed.Value[0], 0, module, true);
 
-                    expression = new Group(groupParsed.Value);
+                    expression = groupParsed.Value;
                     position = parsed.Position;
                 }
             }
@@ -114,32 +114,14 @@ namespace ElmRuntime2.Parser
             //lambda
             else if (stream.IsAt(position, TokenType.Backslash))
             {
-                var arguments = new List<Pattern>();
-                for (position++; position < stream.Length && !stream.IsAt(position, TokenType.Arrow);)
-                {
-                    var argumentParsed = PatternParser.ParsePattern(stream, position);
-                    if (!argumentParsed.Success)
-                    {
-                        break;
-                    }
-                    arguments.Add(argumentParsed.Value);
-                    position = argumentParsed.Position;
-                }
-
-                if (!stream.IsAt(position, TokenType.Arrow))
+                var functionParsed = FunctionParser.ParseFunction(stream, position, module);
+                if (!functionParsed.Success)
                 {
                     throw new ParserException($"Unexpected token while parsing lambda expression");
                 }
-                position++;
 
-                var expressionParsed = ParseExpression(stream, position, module);
-                if (!expressionParsed.Success)
-                {
-                    throw new ParserException($"No expression for lambda expression");
-                }
-
-                expression = new LambdaConstruct(arguments.ToArray(), expressionParsed.Value);
-                position = expressionParsed.Position;
+                expression = functionParsed.Value;
+                position = functionParsed.Position;
             }
             //case pattern
             else if (stream.IsAt(position, TokenType.Case))
@@ -174,6 +156,7 @@ namespace ElmRuntime2.Parser
 
                 expression = new Case(subject, patterns.ToArray());
             }
+            //let expression
             else if (stream.IsAt(position, TokenType.Let))
             {
                 var parsed = LetParser.ParseLet(stream, position, module);
@@ -181,6 +164,7 @@ namespace ElmRuntime2.Parser
                 expression = parsed.Value;
                 position = parsed.Position;
             }
+            //operator
             else if (stream.IsAt(position, TokenType.OpInfix))
             {
                 var symbol = stream.At(position).Content;
@@ -191,22 +175,26 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected token while parsing opeartor expression");
                 }
 
-                var negate = symbol == "-" && stream.At(position).Column + 1 == stream.At(position + 1).Column;
-                if (negate)
+                var negation = symbol == "-" && stream.At(position).Column + 1 == stream.At(position + 1).Column;
+                if (negation)
                 {
-                    expression = new Call("_neg_", termParsed.Value);
+                    expression = new Call("―", termParsed.Value);
                 }
                 else
                 {
-                    expression = new Call(symbol, termParsed.Value);
+                    expression = new InfixCall(symbol, termParsed.Value);
                 }
                 
                 position = termParsed.Position;
             }
+            //prefix operator
             else if (stream.IsAt(position, TokenType.OpPrefix))
             {
-                throw new NotImplementedException();
+                var symbol = stream.At(position).Content;
+                expression = new Call(symbol);
+                position++;
             }
+            //if expression
             else if (stream.IsAt(position, TokenType.If))
             {
                 var condition = ParseExpression(stream, position + 1, module);
@@ -230,11 +218,12 @@ namespace ElmRuntime2.Parser
                 expression = new If(condition.Value, then.Value, @else.Value);
                 position = @else.Position; 
             }
+            //identifier
             else if (stream.IsAt(position, TokenType.Identifier))
             {
                 var name = stream.At(position).Content;
 
-                expression = new Call(name, new Expression[0]);
+                expression = new Call(name);
                 position += 1;
             }
 
@@ -246,12 +235,18 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected end expression");
                 }
 
-                if (termParsed.Value is Call)
+
+                if (termParsed.Value is InfixCall)
                 {
                     var @operator = termParsed.Value as Call;
                     @operator.PrependArgument(expression); //TODO: check this
 
                     expression = @operator;
+                    position = termParsed.Position;
+                }
+                else if (expression is Function)
+                {
+                    expression = new Call(expression, termParsed.Value);
                     position = termParsed.Position;
                 }
                 else if (expression is Call)

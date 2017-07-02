@@ -9,43 +9,22 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Native.Operators
 {
-    public class Plus : Expression
+    public class Plus : Function
     {
-        private readonly Expression curry;
-
         public Plus()
+            : base("+", new Pattern[] { new UnderscorePattern(), new UnderscorePattern() }, null)
         {
-
         }
 
-        private Plus(Expression curry)
+        public override Expression Evaluate(Scope scope, Expression[] argumentValues)
         {
-            this.curry = curry;
-        }
-
-        public Expression Evaluate(Expression[] arguments, Scope scope)
-        {
-            if (arguments.Length == 0)
+            if (argumentValues.Length < arguments.Length)
             {
-                return this;
-            }
-            else if (arguments.Length == 1 && curry == null)
-            {
-                return new Plus(arguments[0]);
+                return Curry(scope, argumentValues);
             }
 
-            var left = curry;
-            var right = default(Expression);
-
-            if (arguments.Length == 1)
-            {
-                right = arguments[0].Evaluate(new Expression[0], scope);
-            }
-            else
-            {
-                left = arguments[0].Evaluate(new Expression[0], scope);
-                right = arguments[1].Evaluate(new Expression[0], scope);
-            }
+            var left = argumentValues[0].Evaluate(scope);
+            var right = argumentValues[1].Evaluate(scope);
 
             if (left is Integer && right is Integer)
             {

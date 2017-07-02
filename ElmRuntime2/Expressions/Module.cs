@@ -24,7 +24,11 @@ namespace ElmRuntime2.Parser
             this.imports = new List<ModuleImport>();
             this.exposing = new List<ModuleExpose>();
             this.expressions = new Dictionary<string, Expression>();
+
             this.operators = new Dictionary<string, Operator>(Native.Operators.Operators.Core); //temp
+            Add(new Native.Operators.Plus());
+            Add(new Native.Operators.Minus());
+            Add(new Native.Operators.Negate());
         }
 
         public void SetName(string name)
@@ -62,24 +66,18 @@ namespace ElmRuntime2.Parser
             return operators.TryGetValue(symbol, out @operator);
         }
 
-        public Expression Evaluate(string name)
+        public Expression Evaluate(string name, params Expression[] arguments)
         {
-            return Evaluate(name, new Value[0], new Scope());
-        }
+            var scope = new Scope();
 
-        public Expression Evaluate(string name, Value[] arguments, Scope scope)
-        {
             //bring imports and expressions into scope
             foreach(var expression in expressions)
             {
                 scope.Set(expression.Key, expression.Value);
             }
 
-            scope.Set("+", new Native.Operators.Plus());
-            scope.Set("-", new Native.Operators.Minus());
-            scope.Set("_neg_", new Native.Operators.Negate());
-
-            return expressions[name].Evaluate(arguments, scope);
+            var call = new Call(name, arguments);
+            return call.Evaluate(scope);
         }        
     }
 }

@@ -17,35 +17,27 @@ namespace ElmRuntime2
         {
             var source = File.ReadAllText(@"c:\\elm\\helloworld1.elm");
             var lexer = ElmLexer.Lex(source);
-
-            //var position = 0;
-            //for (var token = lexer.Next(); token.HasValue; token = lexer.Next(), position++)
-            //{
-            //    Console.WriteLine($"Token [{position} - {token.Value.Type}]{token.Value.Content}");
-            //}
-
-            ////add = \n -> ((\m n-> m + n) n)
-            //lexer.Reset();
-
             var tokens = new TokenStream(lexer);
+
+            for (var t = 0; t < tokens.Length; t++)
+            {
+                Console.WriteLine($"Token [{t.ToString("000")}][{tokens.At(t).Type}] {tokens.At(t).Content}");
+            }
+
             var module = ModuleParser.ParseModule(tokens, 0);
             var scope = new Scope();
-            //var foo = new Record();
-            //scope.Set("foo", foo);
 
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            var list = new List(
-                new Integer(4)
-                //new Integer(2),
-                //new Integer(2),
-                //new Integer(2),
-            );
+            //var list = new List(
+            //    new Integer(4),
+            //    new Integer(2),
+            //    new Integer(2),
+            //    new Integer(2)
+            //);
 
             //var tuple = new Values.Tuple(
             //    new Values.Integer(1),
             //    new Values.String("yes"),
-            //    new Values.Integer(99),
+            //    new Values.Integer(99)
             //);
 
             //var record = new Values.Record()
@@ -53,15 +45,14 @@ namespace ElmRuntime2
             //    .Set("bar", new Values.String("you're welcome"))
             //    .Set("qux", new Values.Boolean(false));
 
-            //var union = new UnionConstructor("Some", new Integer(1), new Integer(-99));
+            var union = new UnionConstructor("Some", new Integer(1), new Integer(-88));
+            var tuple = new Values.Tuple(union, new Values.String("yes"));
 
-            //var tuple = new Values.Tuple(union, new Values.String("yes"));
 
-            var argument = new Integer(3);
-            var result = module.Evaluate("main", new Value[] { argument }, scope);
-
-            stopwatch.Stop();
-            Console.WriteLine($"Parsing + evaluating took={stopwatch.ElapsedMilliseconds}ms");
+            //new Integer(2)
+            var result = module.Evaluate("main", tuple);
+            Console.WriteLine();
+            Console.WriteLine($"Evaluation result: {result} ({result.GetType().Name})");
          }        
     }
 }

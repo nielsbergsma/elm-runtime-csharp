@@ -54,7 +54,14 @@ namespace ElmRuntime2.Lexer
             }
 
             var type = keywords[token.Value.Content];
-            return Maybe<Token>.Some(new Token(token.Value.Line, token.Value.Column, type, token.Value.Content));
+
+            var offset = 0;
+            if (type == TokenType.In)
+            {
+                offset = 1;
+            }
+
+            return Maybe<Token>.Some(new Token(token.Value.Line, token.Value.Column + offset, type, token.Value.Content));
         }
 
         public void Reset()

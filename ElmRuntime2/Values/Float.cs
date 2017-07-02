@@ -30,7 +30,7 @@ namespace ElmRuntime2.Values
             return (int) value;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             return this;
         }
@@ -43,6 +43,11 @@ namespace ElmRuntime2.Values
         public bool OperatorLesserThan(Expression op2)
         {
             return op2 is Float && (op2 as Float).value < value;
+        }
+
+        public override string ToString()
+        {
+            return value.ToString();
         }
     }
 }

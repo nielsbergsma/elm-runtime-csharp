@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Native.Operators
 {
-    public class Negate : Expression
+    public class Negate : Function
     {
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Negate()
+            : base("―", new Pattern[] { new UnderscorePattern() }, null)
         {
-            if (arguments.Length == 0)
-            {
-                return this;
-            }
+        }
 
-            var value = arguments[0].Evaluate(new Expression[0], scope);
-
+        public override Expression Evaluate(Scope scope, Expression[] argumentValues)
+        {
+            var value = argumentValues[0].Evaluate(scope);
             if (value is Integer)
             {
                 return new Integer(-(value as Integer).AsInt());

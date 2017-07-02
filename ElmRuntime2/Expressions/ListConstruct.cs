@@ -19,12 +19,12 @@ namespace ElmRuntime2.Expressions
             this.expressions = expressions;
         }
 
-        public Expression Evaluate(Expression[] arguments, Scope scope)
+        public Expression Evaluate(Scope scope)
         {
             var values = new List<Value>();
             foreach(var expression in expressions)
             {
-                var value = expression.Evaluate(arguments, scope) as Value;
+                var value = expression.Evaluate(scope) as Value;
                 values.Add(value);
             }
 

@@ -14,11 +14,19 @@ namespace ElmRuntime2.Parser
         public static ParseResult<Function> ParseFunction(TokenStream stream, int position, Module module)
         {
             var name = "";
+            var closure = false;
 
             //regular identifier
             if (stream.IsAt(position, TokenType.Identifier))
             {
                 name = stream.At(position).Content;
+                position++;
+            }
+            //lambda
+            else if (stream.IsAt(position, TokenType.Backslash))
+            {
+                name = "<anonymous>";
+                closure = true;
                 position++;
             }
             //operator
@@ -36,7 +44,7 @@ namespace ElmRuntime2.Parser
             }
 
             var arguments = new List<Pattern>();
-            while (!stream.IsAt(position, TokenType.Assign))
+            while (!stream.IsAnyAt(position, TokenType.Assign, TokenType.Arrow))
             {
                 var argumentParsed = PatternParser.ParsePattern(stream, position);
                 if (!argumentParsed.Success)
