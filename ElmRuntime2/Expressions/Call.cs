@@ -96,38 +96,4 @@ namespace ElmRuntime2.Expressions
             }
         }
     }
-
-    public class BinaryOperationCall : Call
-    {
-        private int precedence;
-        private OperatorAssociativity associativity;
-
-        public BinaryOperationCall(Operator @operator, params Expression[] arguments)
-            : this(@operator.Symbol, @operator.Precedence, @operator.Associativity, arguments)
-        {
-
-        }
-
-        public BinaryOperationCall(Operator @operator, int precedence, params Expression[] arguments)
-            : this(@operator.Symbol, precedence, @operator.Associativity, arguments)
-        {
-
-        }
-
-        public BinaryOperationCall(string name, int precedence, OperatorAssociativity associativity, params Expression[] arguments)
-            : base(name, arguments)
-        {
-
-        }
-
-        public int Precedence
-        {
-            get { return precedence; }
-        }
-
-        public OperatorAssociativity Associativity
-        {
-            get { return associativity; }
-        }
-    }
 }

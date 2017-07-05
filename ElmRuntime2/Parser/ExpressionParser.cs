@@ -220,7 +220,7 @@ namespace ElmRuntime2.Parser
                     {
                         throw new ParserException($"Unknown operator {symbol}");
                     }
-                    expression = new BinaryOperationCall(@operator, 0, arguments.ToArray());
+                    expression = new BinaryOperationCall(@operator, 10, arguments.ToArray());
                 }
                 else
                 {
@@ -271,17 +271,11 @@ namespace ElmRuntime2.Parser
                 if (termParsed.Value is BinaryOperationCall)
                 {
                     var @operator = termParsed.Value as BinaryOperationCall;
-
-                    if (IsOperatorCall(module, expression) && IsOperatorCall(module, termParsed.Value))
+                    if (IsOperatorCall(module, expression))
                     {
-                        var currentOperator = termParsed.Value as BinaryOperationCall;
-                        var currentOperatorPrecedence = currentOperator.Precedence;
-
                         var previousOperator = expression as BinaryOperationCall;
-                        var previousOperatorPrecedence = previousOperator.Precedence;
-
-                        var root = !(currentOperatorPrecedence > previousOperatorPrecedence
-                            || (currentOperatorPrecedence == previousOperatorPrecedence && currentOperator.Associativity == OperatorAssociativity.Right));
+                        var root = !(@operator.Precedence > previousOperator.Precedence
+                            || (@operator.Precedence == previousOperator.Precedence && @operator.Associativity == OperatorAssociativity.Right));
 
                         if (root)
                         {

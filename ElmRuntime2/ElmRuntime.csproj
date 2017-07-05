@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\BinaryOperationCall.cs" />
     <Compile Include="Expressions\Closure.cs" />
     <Compile Include="Expressions\DeconstructiveAssignment.cs" />
     <Compile Include="Native\Operators\Minus.cs" />
