@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ElmRuntime2.Values;
 using ElmRuntime2.Exceptions;
+using ElmRuntime2.Parser;
 
 namespace ElmRuntime2.Expressions
 {
@@ -29,11 +30,6 @@ namespace ElmRuntime2.Expressions
         public string Name
         {
             get { return name; }
-        }
-
-        public BinaryOperationCall ToInfix()
-        {
-            return new BinaryOperationCall(name, arguments.ToArray());
         }
 
         public Expression LastArgument
@@ -103,10 +99,35 @@ namespace ElmRuntime2.Expressions
 
     public class BinaryOperationCall : Call
     {
-        public BinaryOperationCall(string name, params Expression[] arguments)
+        private int precedence;
+        private OperatorAssociativity associativity;
+
+        public BinaryOperationCall(Operator @operator, params Expression[] arguments)
+            : this(@operator.Symbol, @operator.Precedence, @operator.Associativity, arguments)
+        {
+
+        }
+
+        public BinaryOperationCall(Operator @operator, int precedence, params Expression[] arguments)
+            : this(@operator.Symbol, precedence, @operator.Associativity, arguments)
+        {
+
+        }
+
+        public BinaryOperationCall(string name, int precedence, OperatorAssociativity associativity, params Expression[] arguments)
             : base(name, arguments)
         {
 
+        }
+
+        public int Precedence
+        {
+            get { return precedence; }
+        }
+
+        public OperatorAssociativity Associativity
+        {
+            get { return associativity; }
         }
     }
 }

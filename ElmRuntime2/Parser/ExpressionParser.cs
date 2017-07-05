@@ -182,7 +182,12 @@ namespace ElmRuntime2.Parser
                 }
                 else
                 {
-                    expression = new BinaryOperationCall(symbol, termParsed.Value);
+                    var @operator = default(Operator);
+                    if (!module.TryGetOperator(symbol, out @operator))
+                    {
+                        throw new ParserException($"Unknown operator {symbol}");
+                    }
+                    expression = new BinaryOperationCall(@operator, termParsed.Value);
                 }
                 
                 position = termParsed.Position;
@@ -210,7 +215,12 @@ namespace ElmRuntime2.Parser
 
                 if (arguments.Count == 2)
                 {
-                    expression = new BinaryOperationCall(symbol, arguments.ToArray());
+                    var @operator = default(Operator);
+                    if (!module.TryGetOperator(symbol, out @operator))
+                    {
+                        throw new ParserException($"Unknown operator {symbol}");
+                    }
+                    expression = new BinaryOperationCall(@operator, 0, arguments.ToArray());
                 }
                 else
                 {
@@ -264,10 +274,14 @@ namespace ElmRuntime2.Parser
 
                     if (IsOperatorCall(module, expression) && IsOperatorCall(module, termParsed.Value))
                     {
-                        var currentOperator = GetOperator(module, termParsed.Value); 
-                        var previousOperator = GetOperator(module, expression);
-                        var root = !(currentOperator.Precedence > previousOperator.Precedence
-                            || (currentOperator.Precedence == previousOperator.Precedence && currentOperator.Associativity == OperatorAssociativity.Right));
+                        var currentOperator = termParsed.Value as BinaryOperationCall;
+                        var currentOperatorPrecedence = currentOperator.Precedence;
+
+                        var previousOperator = expression as BinaryOperationCall;
+                        var previousOperatorPrecedence = previousOperator.Precedence;
+
+                        var root = !(currentOperatorPrecedence > previousOperatorPrecedence
+                            || (currentOperatorPrecedence == previousOperatorPrecedence && currentOperator.Associativity == OperatorAssociativity.Right));
 
                         if (root)
                         {
@@ -318,13 +332,6 @@ namespace ElmRuntime2.Parser
         {
             var @operator = default(Operator);
             return expression is Call && module.TryGetOperator((expression as Call).Name, out @operator);
-        }
-
-        public static Operator GetOperator(Module module, Expression expression)
-        {
-            var @operator = default(Operator);
-            module.TryGetOperator((expression as Call).Name, out @operator);
-            return @operator;
-        }
+        }      
     }
 }
