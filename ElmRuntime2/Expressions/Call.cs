@@ -26,6 +26,28 @@ namespace ElmRuntime2.Expressions
             this.arguments = arguments.ToList();
         }
 
+        public string Name
+        {
+            get { return name; }
+        }
+
+        public BinaryOperationCall ToInfix()
+        {
+            return new BinaryOperationCall(name, arguments.ToArray());
+        }
+
+        public Expression LastArgument
+        {
+            get { return arguments.Last(); }
+        }
+
+        public Expression PopArgument()
+        {
+            var expression = arguments.Last();
+            arguments.RemoveAt(arguments.Count - 1);
+            return expression;
+        }
+
         public Expression Evaluate(Scope scope)
         {
             var expression = this.expression;
@@ -61,17 +83,27 @@ namespace ElmRuntime2.Expressions
         public void PrependArgument(Expression argument)
         {
             arguments.Insert(0, argument);
+
+            if (arguments.Count > 2)
+            {
+                throw new Exception("too many arguments");
+            }
         }
 
         public void AppendArgument(Expression argument)
         {
             arguments.Add(argument);
+
+            if (arguments.Count > 2)
+            {
+                throw new Exception("too many arguments");
+            }
         }
     }
 
-    public class InfixCall : Call
+    public class BinaryOperationCall : Call
     {
-        public InfixCall(string name, params Expression[] arguments)
+        public BinaryOperationCall(string name, params Expression[] arguments)
             : base(name, arguments)
         {
 

@@ -25,10 +25,12 @@ namespace ElmRuntime2.Parser
             this.exposing = new List<ModuleExpose>();
             this.expressions = new Dictionary<string, Expression>();
 
-            this.operators = new Dictionary<string, Operator>(Native.Operators.Operators.Core); //temp
+            this.operators = new Dictionary<string, Operator>(Native.Operators.Operators.Core);
             Add(new Native.Operators.Plus());
             Add(new Native.Operators.Minus());
             Add(new Native.Operators.Negate());
+            Add(new Native.Operators.Multiply());
+            Add(new Native.Operators.Power());
         }
 
         public void SetName(string name)

@@ -41,15 +41,20 @@ namespace ElmRuntime2.Parser
             get { return symbol; }
         }
 
-        public void SetPrecedenceAndAssociativity(int precedence, OperatorAssociativity associativity)
+        public OperatorAssociativity Associativity
         {
-            this.precedence = precedence;
-            this.associativity = associativity;
+            get { return associativity; }
         }
 
         public int Precedence
         {
             get { return precedence; }
+        }
+
+        public void SetPrecedenceAndAssociativity(int precedence, OperatorAssociativity associativity)
+        {
+            this.precedence = precedence;
+            this.associativity = associativity;
         }
 
         public int CompareTo(Operator other)

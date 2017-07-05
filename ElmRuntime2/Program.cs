@@ -54,7 +54,7 @@ namespace ElmRuntime2
             var executingStopwatch = new Stopwatch();
             executingStopwatch.Start();
 
-            var result = module.Evaluate("main", integer);
+            var result = module.Evaluate("main");
 
             executingStopwatch.Stop();
 

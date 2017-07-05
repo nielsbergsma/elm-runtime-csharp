@@ -164,7 +164,7 @@ namespace ElmRuntime2.Parser
                 expression = parsed.Value;
                 position = parsed.Position;
             }
-            //operator
+            //infix operator
             else if (stream.IsAt(position, TokenType.OpInfix))
             {
                 var symbol = stream.At(position).Content;
@@ -182,7 +182,7 @@ namespace ElmRuntime2.Parser
                 }
                 else
                 {
-                    expression = new InfixCall(symbol, termParsed.Value);
+                    expression = new BinaryOperationCall(symbol, termParsed.Value);
                 }
                 
                 position = termParsed.Position;
@@ -191,8 +191,31 @@ namespace ElmRuntime2.Parser
             else if (stream.IsAt(position, TokenType.OpPrefix))
             {
                 var symbol = stream.At(position).Content;
-                expression = new Call(symbol);
                 position++;
+
+                var arguments = new List<Expression>();
+                var term1Parsed = ParseExpression(stream, position, module, false);
+                if (term1Parsed.Success)
+                {
+                    arguments.Add(term1Parsed.Value);
+                    position = term1Parsed.Position;
+                }
+
+                var term2Parsed = ParseExpression(stream, position, module, false);
+                if (term2Parsed.Success)
+                {
+                    arguments.Add(term2Parsed.Value);
+                    position = term2Parsed.Position;
+                }
+
+                if (arguments.Count == 2)
+                {
+                    expression = new BinaryOperationCall(symbol, arguments.ToArray());
+                }
+                else
+                {
+                    expression = new Call(symbol, arguments.ToArray());
+                }
             }
             //if expression
             else if (stream.IsAt(position, TokenType.If))
@@ -227,7 +250,7 @@ namespace ElmRuntime2.Parser
                 position += 1;
             }
 
-            while (greedy && !(start + position == end))
+            while (greedy && position < stream.Length)
             {
                 var termParsed = ParseExpression(stream, position, module, false);
                 if (!termParsed.Success)
@@ -235,13 +258,40 @@ namespace ElmRuntime2.Parser
                     throw new ParserException($"Unexpected end expression");
                 }
 
-
-                if (termParsed.Value is InfixCall)
+                if (termParsed.Value is BinaryOperationCall)
                 {
-                    var @operator = termParsed.Value as Call;
-                    @operator.PrependArgument(expression); //TODO: check this
+                    var @operator = termParsed.Value as BinaryOperationCall;
 
-                    expression = @operator;
+                    if (IsOperatorCall(module, expression) && IsOperatorCall(module, termParsed.Value))
+                    {
+                        var currentOperator = GetOperator(module, termParsed.Value); 
+                        var previousOperator = GetOperator(module, expression);
+                        var root = !(currentOperator.Precedence > previousOperator.Precedence
+                            || (currentOperator.Precedence == previousOperator.Precedence && currentOperator.Associativity == OperatorAssociativity.Right));
+
+                        if (root)
+                        {
+                            @operator.PrependArgument(expression);
+                            expression = @operator;
+                        }
+                        else
+                        {
+                            var right = expression as Call;
+                            while (IsOperatorCall(module, right.LastArgument))
+                            {
+                                right = right.LastArgument as Call;
+                            }
+
+                            @operator.PrependArgument(right.PopArgument());
+                            right.AppendArgument(@operator);
+                        }
+                    }
+                    else
+                    {
+                        @operator.PrependArgument(expression);
+                        expression = @operator;
+                    }
+
                     position = termParsed.Position;
                 }
                 else if (expression is Function)
@@ -251,7 +301,8 @@ namespace ElmRuntime2.Parser
                 }
                 else if (expression is Call)
                 {
-                    (expression as Call).AppendArgument(termParsed.Value);
+                    var call = expression as Call;
+                    call.AppendArgument(termParsed.Value);
                     position = termParsed.Position;
                 }
                 else
@@ -261,6 +312,19 @@ namespace ElmRuntime2.Parser
             }
 
             return new ParseResult<Expression>(expression != null, expression, start + position);
+        }
+
+        public static bool IsOperatorCall(Module module, Expression expression)
+        {
+            var @operator = default(Operator);
+            return expression is Call && module.TryGetOperator((expression as Call).Name, out @operator);
+        }
+
+        public static Operator GetOperator(Module module, Expression expression)
+        {
+            var @operator = default(Operator);
+            module.TryGetOperator((expression as Call).Name, out @operator);
+            return @operator;
         }
     }
 }

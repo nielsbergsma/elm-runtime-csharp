@@ -44,11 +44,12 @@ namespace ElmRuntime2.Parser
                             var token = new Token(tokens[t].Line, tokens[t].Column, TokenType.OpPrefix, @operator.Symbol);
                             result.RemoveAt(result.Count - 1);
                             result.Add(token);
-                            t += size + 1;
+                            t += size;
                         }
                         else
                         {
-                            var token = new Token(tokens[t].Line, tokens[t].Column, TokenType.OpInfix, @operator.Symbol);
+                            var type = tokens[t].Type == TokenType.OpPrefix ? TokenType.OpPrefix : TokenType.OpInfix;
+                            var token = new Token(tokens[t].Line, tokens[t].Column, type, @operator.Symbol);
                             result.Add(token);
                             t += size - 1;
                         }

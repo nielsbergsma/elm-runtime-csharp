@@ -14,7 +14,6 @@ namespace ElmRuntime2.Parser
         public static ParseResult<Function> ParseFunction(TokenStream stream, int position, Module module)
         {
             var name = "";
-            var closure = false;
 
             //regular identifier
             if (stream.IsAt(position, TokenType.Identifier))
@@ -26,7 +25,6 @@ namespace ElmRuntime2.Parser
             else if (stream.IsAt(position, TokenType.Backslash))
             {
                 name = "<anonymous>";
-                closure = true;
                 position++;
             }
             //operator

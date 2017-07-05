@@ -46,6 +46,7 @@
     <Compile Include="Expressions\Closure.cs" />
     <Compile Include="Expressions\DeconstructiveAssignment.cs" />
     <Compile Include="Native\Operators\Minus.cs" />
+    <Compile Include="Native\Operators\Multiply.cs" />
     <Compile Include="Native\Operators\Negate.cs" />
     <Compile Include="Native\Operators\Operator.cs" />
     <Compile Include="Native\Operators\Plus.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Function.cs" />
     <Compile Include="Expressions\ListConstruct.cs" />
+    <Compile Include="Native\Operators\Power.cs" />
     <Compile Include="Parser\ExpressionParser.cs" />
     <Compile Include="Parser\FunctionParser.cs" />
     <Compile Include="Parser\LetParser.cs" />
