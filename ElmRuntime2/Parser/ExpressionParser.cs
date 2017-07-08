@@ -99,7 +99,15 @@ namespace ElmRuntime2.Parser
                 {
                     var groupParsed = ParseExpression(parsed.Value[0], 0, module, true);
 
-                    expression = groupParsed.Value;
+                    if (groupParsed.Value is Function)
+                    {
+                        expression = groupParsed.Value;
+                    }
+                    else
+                    { 
+                        expression = new Group(groupParsed.Value);
+                    }
+
                     position = parsed.Position;
                 }
             }
@@ -273,9 +281,9 @@ namespace ElmRuntime2.Parser
                     var @operator = termParsed.Value as BinaryOperationCall;
                     if (IsOperatorCall(module, expression))
                     {
-                        var previousOperator = expression as BinaryOperationCall;
-                        var root = !(@operator.Precedence > previousOperator.Precedence
-                            || (@operator.Precedence == previousOperator.Precedence && @operator.Associativity == OperatorAssociativity.Right));
+                        var currentOperator = expression as BinaryOperationCall;
+                        var root = !(@operator.Precedence > currentOperator.Precedence 
+                            || (@operator.Precedence == currentOperator.Precedence && @operator.Associativity == OperatorAssociativity.Right));
 
                         if (root)
                         {

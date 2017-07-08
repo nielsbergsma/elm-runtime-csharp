@@ -46,6 +46,7 @@
     <Compile Include="Expressions\BinaryOperationCall.cs" />
     <Compile Include="Expressions\Closure.cs" />
     <Compile Include="Expressions\DeconstructiveAssignment.cs" />
+    <Compile Include="Expressions\Group.cs" />
     <Compile Include="Native\Operators\Minus.cs" />
     <Compile Include="Native\Operators\Multiply.cs" />
     <Compile Include="Native\Operators\Negate.cs" />
