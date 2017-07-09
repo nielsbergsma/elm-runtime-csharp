@@ -12,6 +12,6 @@ namespace ElmRuntime2.Values
     public interface Value : Expression
     {
         bool OperatorEquals(Expression op2);
-        bool OperatorLesserThan(Expression op2);
+        bool OperatorLessThan(Expression op2);
     }
 }

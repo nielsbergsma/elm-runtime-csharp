@@ -68,7 +68,7 @@ namespace ElmRuntime2.Values
             return true;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
             return false;
         }

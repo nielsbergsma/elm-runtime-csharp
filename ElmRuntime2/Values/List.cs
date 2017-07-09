@@ -53,17 +53,18 @@ namespace ElmRuntime2.Values
             }
         }
 
-        public List Prepend(Value value)
+        public List Prepend(Expression value)
         {
-            var newValues = new Value[this.values.Length + 1];
+            var newValues = new Expression[values.Length + 1];
+            values.CopyTo(newValues, 1);
             newValues[0] = value;
-            this.values.CopyTo(newValues, 1);
-            return new List(this.values);
+
+            return new List(newValues);
         }
 
         public List Concat(List other)
         {
-            var newValues = new Value[values.Length + other.values.Length];
+            var newValues = new Expression[values.Length + other.values.Length];
             Array.Copy(values, newValues, values.Length);
             Array.Copy(other.values, 0, newValues, values.Length, other.values.Length);
             return new List(newValues);
@@ -91,7 +92,7 @@ namespace ElmRuntime2.Values
             return true;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
             var other = op2 as List;
             if (other == null || other.values.Length != values.Length)
@@ -112,7 +113,7 @@ namespace ElmRuntime2.Values
                 {
                     continue;
                 }
-                else if (thisValue.OperatorLesserThan(thatValue))
+                else if (thisValue.OperatorLessThan(thatValue))
                 {
                     return true;
                 }

@@ -35,7 +35,7 @@ namespace ElmRuntime2.Values
             return other != null && other.value == value;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
             var other = op2 as String;
             return other != null && string.Compare(value, (op2 as String).value) < 0;

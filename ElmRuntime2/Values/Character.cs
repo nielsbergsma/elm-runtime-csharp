@@ -34,9 +34,9 @@ namespace ElmRuntime2.Values
             return op2 is Character && (op2 as Character).value == value;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
-            return op2 is Character && (op2 as Character).value < value;
+            return op2 is Character && value < (op2 as Character).value;
         }
 
         public override string ToString()

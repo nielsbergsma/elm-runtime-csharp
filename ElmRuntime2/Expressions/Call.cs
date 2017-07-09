@@ -32,6 +32,11 @@ namespace ElmRuntime2.Expressions
             get { return name; }
         }
 
+        public bool HasArguments
+        {
+            get { return arguments.Count > 0; }
+        }
+
         public Expression LastArgument
         {
             get { return arguments.Last(); }
@@ -64,7 +69,7 @@ namespace ElmRuntime2.Expressions
                     arguments = arguments.Skip(function.NumberOfArguments).ToList();
                 }
 
-                //eager evaluate arguments before calling
+                //evaluate arguments eagerly before invoke
                 for (var fa = 0; fa < functionArguments.Count; fa++)
                 {
                     functionArguments[fa] = functionArguments[fa].Evaluate(scope);
@@ -73,27 +78,17 @@ namespace ElmRuntime2.Expressions
                 expression = function.Evaluate(scope, functionArguments.ToArray());
             }
 
-            return expression.Evaluate(scope);
+                return expression.Evaluate(scope);
         }
 
         public void PrependArgument(Expression argument)
         {
             arguments.Insert(0, argument);
-
-            if (arguments.Count > 2)
-            {
-                throw new Exception("too many arguments");
-            }
         }
 
         public void AppendArgument(Expression argument)
         {
             arguments.Add(argument);
-
-            if (arguments.Count > 2)
-            {
-                throw new Exception("too many arguments");
-            }
         }
     }
 }

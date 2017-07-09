@@ -40,9 +40,9 @@ namespace ElmRuntime2.Values
             return op2 is Float && (op2 as Float).value == value;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
-            return op2 is Float && (op2 as Float).value < value;
+            return op2 is Float && value < (op2 as Float).value;
         }
 
         public override string ToString()

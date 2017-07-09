@@ -39,9 +39,9 @@ namespace ElmRuntime2.Values
             return op2 is Integer && (op2 as Integer).value == value;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
-            return op2 is Integer && (op2 as Integer).value < value;
+            return op2 is Integer && value < (op2 as Integer).value;
         }
 
         public Float ToFloat()

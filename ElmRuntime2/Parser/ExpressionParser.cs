@@ -47,6 +47,9 @@ namespace ElmRuntime2.Parser
                 {
                     throw new ParserException($"Unable to parse list near line {stream.LineOf(position)}");
                 }
+
+                expression = parsedList.Value;
+                position = parsedList.Position;
             }
             //record
             else if (stream.IsAt(position, TokenType.LeftBrace))
@@ -318,6 +321,11 @@ namespace ElmRuntime2.Parser
                 else if (expression is Call)
                 {
                     var call = expression as Call;
+                    while (call.HasArguments && call.LastArgument is Call)
+                    {
+                        call = call.LastArgument as Call;
+                    }
+
                     call.AppendArgument(termParsed.Value);
                     position = termParsed.Position;
                 }

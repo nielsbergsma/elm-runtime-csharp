@@ -65,7 +65,7 @@ namespace ElmRuntime2.Values
             return true;
         }
 
-        public bool OperatorLesserThan(Expression op2)
+        public bool OperatorLessThan(Expression op2)
         {
             var other = op2 as Tuple;
             if (other == null || other.values.Length != values.Length)
@@ -86,7 +86,7 @@ namespace ElmRuntime2.Values
                 {
                     continue;
                 }
-                else if (thisValue.OperatorLesserThan(thatValue))
+                else if (thisValue.OperatorLessThan(thatValue))
                 {
                     return true;
                 }

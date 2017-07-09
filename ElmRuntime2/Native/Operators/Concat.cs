@@ -1,4 +1,5 @@
-﻿using ElmRuntime2.Expressions;
+﻿using ElmRuntime2.Exceptions;
+using ElmRuntime2.Expressions;
 using ElmRuntime2.Values;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Native.Operators
 {
-    public class Multiply : Function
+    public class Concat : Function
     {
-        public Multiply()
-            : base("*", new Pattern[] { new UnderscorePattern(), new UnderscorePattern() }, null)
+        public Concat()
+            : base("++", new Pattern[] { new UnderscorePattern(), new UnderscorePattern() }, null)
         {
         }
 
@@ -25,15 +26,17 @@ namespace ElmRuntime2.Native.Operators
             var left = argumentValues[0];
             var right = argumentValues[1];
 
-            if (left is Integer && right is Integer)
+            if (left is List && right is List)
             {
-                var result = (left as Number).AsInt() * (right as Number).AsInt();
-                return new Integer(result);
+                return (left as List).Concat(right as List);
+            }
+            else if (left is Values.String && right is Values.String)
+            {
+                return new Values.String((left as Values.String).Value + (right as Values.String).Value);
             }
             else
             {
-                var result = (left as Number).AsFloat() * (right as Number).AsFloat();
-                return new Float(result);
+                throw new RuntimeException($"Unable to concat values");
             }
         }
     }
