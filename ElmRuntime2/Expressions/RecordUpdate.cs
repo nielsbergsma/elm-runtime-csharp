@@ -23,17 +23,18 @@ namespace ElmRuntime2.Expressions
 
         public Expression Evaluate(Scope scope)
         {
-            var recordValue = default(Expression);
-            if (!scope.TryGet(name, out recordValue) || !(recordValue is Record))
+            var record = new Call(name).Evaluate(scope) as Record;
+            if (record == null)
             {
                 throw new RuntimeException($"Variable {name} is not a record");
             }
-            var record = recordValue as Record;
+
+            var recordScope = record.NewRecordScope(scope, name + ".");
 
             var fieldValues = new List<RecordFieldValue>();
             foreach (var fieldExpression in fieldExpressions)
             {
-                var value = fieldExpression.Value.Evaluate(scope) as Value;
+                var value = fieldExpression.Value.Evaluate(recordScope) as Value;
                 var field = new RecordFieldValue(fieldExpression.Key, value);
                 fieldValues.Add(field);
             }

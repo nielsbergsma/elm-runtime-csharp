@@ -18,7 +18,7 @@ namespace ElmRuntime2.Parser
             var fieldExpressions = new Dictionary<string, Expression>();
             foreach (var assignment in parsed.Value)
             {
-                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2, module);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2, module, true);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;
@@ -46,7 +46,7 @@ namespace ElmRuntime2.Parser
             {
                 var assignment = parsed.Value[0];
                 var fieldName = assignment.At(2).Content;
-                var fieldExpression = ExpressionParser.ParseExpression(assignment, 4, module);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 4, module, true);
 
                 fieldExpressions[fieldName] = fieldExpression.Value;
             }
@@ -54,7 +54,7 @@ namespace ElmRuntime2.Parser
             for (var fe = 1; fe < parsed.Value.Length; fe++)
             {
                 var assignment = parsed.Value[fe];
-                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2, module);
+                var fieldExpression = ExpressionParser.ParseExpression(assignment, 2, module, true);
                 if (assignment.IsAt(0, TokenType.Identifier, TokenType.Assign) && fieldExpression.Success)
                 {
                     var fieldName = assignment.At(0).Content;

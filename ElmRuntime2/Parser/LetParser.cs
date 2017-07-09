@@ -75,7 +75,7 @@ namespace ElmRuntime2.Parser
             }
             position++;
 
-            var resultParsed = ExpressionParser.ParseExpression(stream, position, module);
+            var resultParsed = ExpressionParser.ParseExpression(stream, position, module, true);
             if (!resultParsed.Success)
             {
                 throw new ParserException($"Unexpected token in let expression, expected result expression");

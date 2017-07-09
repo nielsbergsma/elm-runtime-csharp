@@ -29,7 +29,7 @@ namespace ElmRuntime2.Parser
                 var expressions = new List<Expression>();
                 for (var e = 0; e < numberOfElements; e++)
                 {
-                    var expression = ExpressionParser.ParseExpression(stream, position, module);
+                    var expression = ExpressionParser.ParseExpression(stream, position, module, false);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);
@@ -51,7 +51,7 @@ namespace ElmRuntime2.Parser
                 var expressions = new List<Expression>();
                 foreach (var element in array.Value)
                 {
-                    var expression = ExpressionParser.ParseExpression(element, 0, module);
+                    var expression = ExpressionParser.ParseExpression(element, 0, module, true);
                     if (expression.Success)
                     {
                         expressions.Add(expression.Value);

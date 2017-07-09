@@ -95,7 +95,7 @@ namespace ElmRuntime2.Parser
                     }
 
                     expression = tupleConstruct.Value;
-                    position = parsed.Position;
+                    position = tupleConstruct.Position;
                 }
                 //parentheses
                 else if (parsed.Value.Length == 1)
@@ -137,7 +137,7 @@ namespace ElmRuntime2.Parser
             //case pattern
             else if (stream.IsAt(position, TokenType.Case))
             {
-                var subjectParsed = ParseExpression(stream, position + 1, module);
+                var subjectParsed = ParseExpression(stream, position + 1, module, true);
                 var subject = subjectParsed.Value;
                 position = subjectParsed.Position;
 
@@ -159,7 +159,7 @@ namespace ElmRuntime2.Parser
                         throw new ParserException($"Unexpected token while parsing case expression");
                     }
 
-                    var expressionParsed = ParseExpression(stream, position + 1, module);
+                    var expressionParsed = ParseExpression(stream, position + 1, module, true);
                     position = expressionParsed.Position;
 
                     patterns.Add(new CasePattern(conditionParsed.Value, expressionParsed.Value));
@@ -241,19 +241,19 @@ namespace ElmRuntime2.Parser
             //if expression
             else if (stream.IsAt(position, TokenType.If))
             {
-                var condition = ParseExpression(stream, position + 1, module);
+                var condition = ParseExpression(stream, position + 1, module, true);
                 if (!stream.IsAt(condition.Position, TokenType.Then))
                 {
                     throw new ParserException($"Unable to parse if expression, cannot find then");
                 }
 
-                var then = ParseExpression(stream, condition.Position + 1, module);
+                var then = ParseExpression(stream, condition.Position + 1, module, true);
                 if (!stream.IsAt(then.Position, TokenType.Else))
                 {
                     throw new ParserException($"Unable to parse if expression, cannot find else");
                 }
 
-                var @else = ParseExpression(stream, then.Position + 1, module);
+                var @else = ParseExpression(stream, then.Position + 1, module, true);
                 if (!@else.Success)
                 {
                     throw new ParserException($"Unexpected end of if expression");

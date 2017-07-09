@@ -35,6 +35,16 @@ namespace ElmRuntime2.Values
             return Set(new[] { new RecordFieldValue(name, value) });
         }
 
+        public Scope NewRecordScope(Scope parent, string keyPrefix)
+        {
+            var recordScope = new Scope(parent);
+            foreach(var field in fields)
+            {
+                recordScope.Set(keyPrefix + field.Key, field.Value);
+            }
+            return recordScope;
+        }
+
         public Record Set(params RecordFieldValue[] values)
         {
             var fields = new Dictionary<string, Expression>(this.fields);
