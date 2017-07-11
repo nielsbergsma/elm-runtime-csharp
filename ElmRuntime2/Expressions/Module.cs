@@ -49,6 +49,8 @@ namespace ElmRuntime2.Parser
             Add(new Native.Operators.RightForward());
             Add(new Native.Operators.Concat());
             Add(new Native.Operators.Prepend());
+
+            Add(new Native.Trace());
         }
 
         public void SetName(string name)

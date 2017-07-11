@@ -47,6 +47,7 @@
     <Compile Include="Expressions\Closure.cs" />
     <Compile Include="Expressions\DeconstructiveAssignment.cs" />
     <Compile Include="Expressions\Group.cs" />
+    <Compile Include="Native\Trace.cs" />
     <Compile Include="Native\Operators\And.cs" />
     <Compile Include="Native\Operators\Concat.cs" />
     <Compile Include="Native\Operators\Divide.cs" />
