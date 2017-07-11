@@ -28,8 +28,8 @@ namespace ElmRuntime2
             var module = ModuleParser.ParseModule(tokens, 0);
             var scope = new Scope();
 
-            var integer = new Integer(2);
-            
+            //var integer = new Integer(2);
+
             //var list = new List(
             //    new Integer(4),
             //    new Integer(2),
@@ -37,18 +37,21 @@ namespace ElmRuntime2
             //    new Integer(2)
             //);
 
+
+
             //var tuple = new Values.Tuple(
             //    new Values.Integer(1),
             //    new Values.String("yes"),
             //    new Values.Integer(99)
             //);
 
+
             //var record = new Values.Record()
             //    .Set("foo", new Values.Integer(1))
             //    .Set("bar", new Values.String("you're welcome"))
             //    .Set("qux", new Values.Boolean(false));
 
-            //var union = new UnionConstructor("Some", new Integer(1), new Integer(-88));
+            //var union = new Union("Some", new Integer(1), new Integer(-88));
             //var tuple = new Values.Tuple(union, new Values.String("yes"));
 
             var executingStopwatch = new Stopwatch();

@@ -13,5 +13,6 @@ namespace ElmRuntime2.Values
     {
         bool OperatorEquals(Expression op2);
         bool OperatorLessThan(Expression op2);
+        string ToJson();
     }
 }

@@ -45,5 +45,10 @@ namespace ElmRuntime2.Values
         {
             return $"\"{value}\"";
         }
+
+        public string ToJson()
+        {
+            return "\"" + value + "\"";
+        }
     }
 }

@@ -133,7 +133,7 @@
     <Compile Include="Values\RecordField.cs" />
     <Compile Include="Values\String.cs" />
     <Compile Include="Values\Tuple.cs" />
-    <Compile Include="Values\UnionConstructor.cs" />
+    <Compile Include="Values\Union.cs" />
     <Compile Include="Values\Value.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

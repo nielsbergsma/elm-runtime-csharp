@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ElmRuntime2.Values
 {
-    public class UnionConstructor : Value
+    public class Union : Value
     {
         private readonly string constructor;
         private readonly Expression[] values;
 
-        public UnionConstructor(string constructor, params Expression[] values)
+        public Union(string constructor, params Expression[] values)
         {
             this.constructor = constructor;
             this.values = values;
@@ -48,7 +48,7 @@ namespace ElmRuntime2.Values
 
         public bool OperatorEquals(Expression op2)
         {
-            var other = op2 as UnionConstructor;
+            var other = op2 as Union;
             if (other == null || other.values.Length != values.Length)
             {
                 return false;
@@ -76,6 +76,11 @@ namespace ElmRuntime2.Values
         public override string ToString()
         {
             return $"<{constructor} {string.Join(",", values.Select(v => v.ToString()))}>";
+        }
+
+        public string ToJson()
+        {
+            return $"[\"{constructor}\",{string.Join(",", values.Where(v => v is Value).Cast<Value>().Select(v => v.ToJson()))}]";
         }
     }
 }

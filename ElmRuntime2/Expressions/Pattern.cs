@@ -210,7 +210,7 @@ namespace ElmRuntime2.Expressions
 
         public bool Evaluate(Scope scope, Expression value)
         {
-            var union = value as UnionConstructor;
+            var union = value as Union;
             if (union.Constructor != constructor)
             {
                 return false;

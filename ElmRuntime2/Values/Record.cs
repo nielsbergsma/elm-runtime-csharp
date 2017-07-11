@@ -94,5 +94,10 @@ namespace ElmRuntime2.Values
         {
             return $"{{{string.Join(",", fields.Select(f => f.Key + ": " + f.Value.ToString()))}}}";
         }
+
+        public string ToJson()
+        {
+            return $"{{{string.Join(",", fields.Where(f => f.Value is Value).Select(f => "\"" + f.Key + "\":" + (f.Value as Value).ToJson()))}}}";
+        }
     }
 }

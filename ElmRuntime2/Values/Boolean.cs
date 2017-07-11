@@ -42,5 +42,10 @@ namespace ElmRuntime2.Values
         {
             return value.ToString();
         }
+
+        public string ToJson()
+        {
+            return value ? "true" : "false";
+        }
     }
 }
